@@ -1,5 +1,7 @@
 package com.inventario.gina.model;
 
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -21,6 +23,7 @@ public class Prenda {
 	private String estatus;
 	private Double precioCompra;
 	private Double precioVenta;
+	private Date fechaCreacion;
 	private String caracteristicas;
 	
 	@OneToOne
@@ -105,6 +108,14 @@ public class Prenda {
 
 	public void setCategoria(Categorias categoria) {
 		this.categoria = categoria;
+	}
+
+	public Date getFechaCreacion() {
+		return fechaCreacion;
+	}
+
+	public void setFechaCreacion(Date fechaCreacion) {
+		this.fechaCreacion = fechaCreacion;
 	}
 
 	@Override

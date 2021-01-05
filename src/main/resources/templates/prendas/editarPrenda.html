@@ -7,7 +7,7 @@
     <meta name="author" content="">
     <link rel="icon" href="favicon.ico">
 
-    <title>Tienda | Formulario de Registro de prendas</title>
+    <title>Tienda | Actualizar prenda</title>
     <!-- Bootstrap core CSS -->
     <link th:href="@{/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
     <!-- Custom styles for this template -->
@@ -23,11 +23,12 @@
     <main role="main">     
       <br>
       <div class="container div-encabezado"> 
-		<h4 class="card-header div-encabezado letra"><strong>Registro de prendas</strong></h4>   
-        <div class="card div-interno">          
-          <div class="alert alert-warning" th:if="${mensaje != null}" th:text="${mensaje}" role="alert"></div>                    
-          <div class="card-body letra">
-            <form th:action="@{/inventario/guardar}" th:method="post" th:object="${prenda}"> 
+
+          <h4 class="card-header div-encabezado"><strong>Actualizar Prenda</strong></h4>   
+          <div class="alert alert-warning" th:if="${mensaje != null}" th:text="${mensaje}" role="alert">          
+          </div>                    
+          <div class="card-body div-interno">
+            <form th:action="@{/inventario/editar}" th:method="post" th:object="${prenda}"> 
               <input type="hidden" th:field="*{id}">  
               <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger" role="alert">
               		Favor de corregir los siguientes errores:
@@ -40,7 +41,7 @@
                 <div class="col-md-3"> 
                   <div class="form-group">
                     <label for="nombre">Código</label>
-                    <input type="text" class="form-control" th:field="*{codigo}" id="codigo" name="codigo" placeholder="Escriba el código de barras" required="required">
+                    <input type="text" class="form-control" disabled th:field="*{codigo}" id="codigo" name="codigo" placeholder="Escriba el código de barras" required="required">
                   </div>
                 </div>
                 <div class="col-md-3"> 
@@ -116,10 +117,10 @@
               <button type="submit" title="Guardar prenda" class="btn btn-primary">Guardar</button>  
             </form>
           </div>
-        </div>
       </div> <!-- /container -->
 
     </main>
+
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
