@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="favicon.ico">
+
+    <title>Tienda | Vender</title>
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link th:href="@{/bootstrap/css/jumbotron.css}" rel="stylesheet">
+    <link th:href="@{/styles/inventarioPrendas.css}" rel="stylesheet">
+    <link th:href="@{/bootstrap/css/sticky-footer-navbar.css}" rel="stylesheet">
+    <link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet" >
+  </head>
+
+ <body  class="principal">
+    
+    <header th:insert="fragments/menu :: menu-principal"></header>
+	<main role="main" >  
+	<br>   
+       <div class="container div-encabezado">
+          <h4 class="card-header div-encabezado" ><strong>Vender</strong></h4>    
+          <div th:if="${mensaje} != null" th:text="${mensaje}" role="alert" class="alert alert-warning"></div>        
+          <div class="card-body div-interno">
+            <form method="post" th:action="@{/vender/agregar}" th:object="${prenda}">              
+              <div class="row">
+                <div class="col-md-5"> 
+                  <div class="form-group">
+                    <label for="nombre">Código de barras</label>
+                    <input autofocus autocomplete="off" type="text" class="form-control" th:field="*{codigo}" id="codigo" name="codigo" placeholder="Código de barras" required="required">
+                  </div>
+                </div>
+              </div>  
+            </form>
+            <form th:action="@{/vender/terminar}" method="post">  
+              <div class="row">
+                <div class="col-md-3"> 
+                  <div class="form-group">
+                    <button type="submit" class="btn btn-primary">Terminar</button>
+                    <a class="btn btn-danger" onclick="return(confirm('Estás seguro de cancelar la venta?'))" th:href="@{/vender/cancelar}">Cancelar Venta</a>
+                  </div>
+                </div>
+              </div>  
+            </form>  
+              <div class="row">
+                <div class="col-md-5"> 
+                  <div class="form-group">
+                  	<h5 id="numPrendas">Número de prendas: <strong th:text="${numPrendas}"></strong></h1>
+                    <h1 id="total">Total: $<strong th:text="${total}"></strong></h1>
+                  </div>
+                </div>
+              </div> 
+              <hr>
+              <div class="card-body">
+                <table class="table table-hover">
+                    <thead class="table-head">
+                        <tr>
+                        <th scope="col">Código</th>
+                        <th scope="col">Marca</th>
+                        <th scope="col">Modelo</th>
+                        <th scope="col">Talla</th>
+                        <th scope="col">Categoría</th>
+                        <th scope="col">Precio</th>
+                        <th scope="col">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="prenda, it : ${session.carrito}">
+	                        <th scope="row" th:text="${prenda.codigo}"></th>
+	                        <td th:text="${prenda.marca}"></td>
+	                        <td th:text="${prenda.modelo}"></td>
+	                        <td th:text="${prenda.talla}"></td>
+	                        <td th:text="${prenda.categoria.nombre}"></td>
+	                        <td th:text="'$'+${prenda.precioVenta}"></td>
+	                        <td>
+	                            <form th:action="@{/vender/quitar/} + ${it.index}" method="post">
+		                            <button type="submit" class="btn btn-danger">Eliminar</button>
+		                        </form>
+	                        </td>
+                        </tr>         
+                    </tbody>
+                </table>
+              </div> 
+          </div>
+      </div> <!-- /container -->
+
+    </main>
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> 
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>    
+    <script src="@{/tinymce/tinymce.min.js}"></script>
+  </body>
+</html>

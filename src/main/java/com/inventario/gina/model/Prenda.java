@@ -30,6 +30,23 @@ public class Prenda {
 	@JoinColumn(name = "idCategoria")
 	private Categorias categoria;
 
+	
+	public Prenda(){}
+	
+	
+	public Prenda(Integer id, String codigo, String marca, Integer talla, String modelo, Double precioVenta,
+			Categorias categoria) {
+		super();
+		this.id = id;
+		this.codigo = codigo;
+		this.marca = marca;
+		this.talla = talla;
+		this.modelo = modelo;
+		this.precioVenta = precioVenta;
+		this.categoria = categoria;
+	}
+
+
 	public Integer getId() {
 		return id;
 	}

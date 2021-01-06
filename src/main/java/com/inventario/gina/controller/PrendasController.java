@@ -98,6 +98,7 @@ public class PrendasController {
 	
 	@PostMapping("/editar")
 	public String actualizar(Prenda prenda, RedirectAttributes att) {
+		System.out.println(prenda);
 		Prenda prendaBD = prendaService.buscarPorId(prenda.getId());
 		if(prendaBD != null) {
 			prendaBD.setMarca(prenda.getMarca());
