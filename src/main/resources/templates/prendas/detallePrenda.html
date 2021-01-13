@@ -32,7 +32,7 @@
               	<div class="row">
 	                <div class="col-md-3"> 
 	                  <div class="form-group">
-	                    <label for="nombre">Código</label>
+	                    <label for="nombre">Inventario</label>
 	                    <input type="text" class="detalle-input" id="codigo" name="codigo" th:value="${prenda.codigo}" disabled>
 	                  </div>
 	                </div>
@@ -63,13 +63,13 @@
 	                <div class="col-md-3"> 
 	                  <div class="form-group">
 	                    <label for="nombre">Precio de Compra</label>
-	                    <input type="text" class="detalle-input" th:value="${prenda.precioCompra}" disabled>
+	                    <input type="text" class="detalle-input" th:value="'$' + ${#numbers.formatDecimal(prenda.precioCompra, 0, 'COMMA', 2, 'POINT')}" disabled>
 	                  </div>
 	                </div>
 	                <div class="col-md-3"> 
 	                  <div class="form-group">
 	                    <label for="nombre">Precio de Venta</label>
-	                    <input type="text" class="detalle-input" th:value="${prenda.precioVenta}" disabled>
+	                    <input type="text" class="detalle-input" th:value="'$' + ${#numbers.formatDecimal(prenda.precioVenta, 0, 'COMMA', 2, 'POINT')}" disabled>
 	                  </div>
 	                </div>
 	                <div class="col-md-3"> 

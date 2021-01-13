@@ -1,7 +1,12 @@
 package com.inventario.gina.controller;
 
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,6 +22,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.inventario.gina.model.Prenda;
 import com.inventario.gina.service.ICategoriaService;
 import com.inventario.gina.service.IPrendaService;
+import com.inventario.gina.util.ExcelExporterInventario;
 
 @Controller
 @RequestMapping("/inventario")
@@ -101,6 +107,7 @@ public class PrendasController {
 		System.out.println(prenda);
 		Prenda prendaBD = prendaService.buscarPorId(prenda.getId());
 		if(prendaBD != null) {
+			prendaBD.setCodigo(prenda.getCodigo());
 			prendaBD.setMarca(prenda.getMarca());
 			prendaBD.setModelo(prenda.getModelo());
 			prendaBD.setTalla(prenda.getTalla());
@@ -116,6 +123,22 @@ public class PrendasController {
 		
 		return "redirect:/inventario/listado";
 	}
+	
+	@GetMapping("/export/excel/inventario")
+    public void exportToExcel(HttpServletResponse response) throws IOException {
+        response.setContentType("application/octet-stream");
+        DateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy_HH:mm:ss");
+        String currentDateTime = dateFormatter.format(new Date());         
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=Inventario_" + currentDateTime + ".xlsx";
+        response.setHeader(headerKey, headerValue);
+         
+        List<Prenda> prendas = prendaService.listarTodas();
+         
+        ExcelExporterInventario excelExporter = new ExcelExporterInventario(prendas);
+         
+        excelExporter.export(response);    
+    }
 	
 	@GetMapping("/eliminar/{id}")
 	public String eliminar(@PathVariable Integer id, RedirectAttributes att) {

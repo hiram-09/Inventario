@@ -1,7 +1,6 @@
 package com.inventario.gina.controller;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,16 +15,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.inventario.gina.model.Perfiles;
 import com.inventario.gina.model.Prenda;
 import com.inventario.gina.model.PrendaParaVender;
 import com.inventario.gina.model.PrendaVendida;
 import com.inventario.gina.model.Usuario;
 import com.inventario.gina.model.Venta;
-import com.inventario.gina.repository.PrendaVendidaRepository;
-import com.inventario.gina.repository.UsuariosRepository;
-import com.inventario.gina.repository.VentaRepository;
 import com.inventario.gina.service.IPrendaService;
+import com.inventario.gina.service.IPrendaVendidaService;
+import com.inventario.gina.service.IUsuarioService;
+import com.inventario.gina.service.IVentaService;
 
 @Controller
 @RequestMapping("/vender")
@@ -35,13 +33,13 @@ public class VenderController {
 	IPrendaService prendaService;
 	
 	@Autowired
-	UsuariosRepository usuarioRepo;
+	IUsuarioService usuarioService;
 	
 	@Autowired
-	PrendaVendidaRepository prendaVendidaRepo;
+	IPrendaVendidaService prendaVendidaService;
 	
 	@Autowired
-	VentaRepository ventaRepo;
+	IVentaService ventaService;
 	
 	@GetMapping("/")
 	public String indexVender(Model model, HttpServletRequest request) {
@@ -66,7 +64,11 @@ public class VenderController {
 			return "redirect:/vender/";
 		}
 		if(prendaBuscadaPorCodigo.getEstatus().equals("Vendida")) {
-			att.addFlashAttribute("mensaje", "La prenda con código: "+prenda.getCodigo() + " ya se vendió");
+			att.addFlashAttribute("mensaje", "La prenda con código "+prenda.getCodigo() + " ya se vendió");
+			return "redirect:/vender/";
+		}
+		if(prendaBuscadaPorCodigo.getEstatus().equals("Apartada")) {
+			att.addFlashAttribute("mensaje", "La prenda con código "+prenda.getCodigo() + " se encuentra apartada");
 			return "redirect:/vender/";
 		}
 		for(PrendaParaVender prendaCarrito : carrito) {
@@ -81,12 +83,14 @@ public class VenderController {
 		this.addCarrito(carrito, request);
 		return "redirect:/vender/";
 	}
+	
 	@GetMapping("/cancelar")
 	public String cancelarLimpiar(HttpServletRequest request) {
 		this.cleanCarrito(request);
 		
 		return "redirect:/vender/";
 	}
+	
 	@PostMapping("/quitar/{index}")
 	public String quitarDelCarrito(@PathVariable int index, HttpServletRequest request) {
 		ArrayList<PrendaParaVender> carrito = this.getCarrito(request);
@@ -104,12 +108,12 @@ public class VenderController {
 		for(PrendaParaVender prendaCarrito : carrito) {
 			Prenda prenda = prendaService.buscarPorCodigo(prendaCarrito.getCodigo());
 			
-			if(prenda == null || prenda.getEstatus().equals("Vendida")) continue;
-			Usuario usuario = usuarioRepo.findById(1).orElse(null);
-			Venta venta = ventaRepo.save(new Venta());
+			if(prenda == null || prenda.getEstatus().equals("Vendida") || prenda.getEstatus().equals("Apartada")) continue;
+			Usuario usuario = usuarioService.buscarPorId(1);
+			Venta venta = ventaService.guardar(new Venta());
 			prenda.setEstatus("Vendida");
 			prendaService.guardar(prenda);
-			prendaVendidaRepo.save(new PrendaVendida(prendaCarrito.getCodigo(), prendaCarrito.getModelo(), prendaCarrito.getPrecioVenta(), venta, usuario));
+			prendaVendidaService.guardar(new PrendaVendida(prendaCarrito.getPrecioVenta(), prenda, venta, usuario));
 		}
 		this.cleanCarrito(request);
 		att.addFlashAttribute("mensaje","Venta realizada exitosamente!!!");
@@ -125,13 +129,17 @@ public class VenderController {
 		
 		return carrito;
 	}
+	
 	private void addCarrito(ArrayList<PrendaParaVender> carrito, HttpServletRequest request) {
         request.getSession().setAttribute("carrito", carrito);
     }
+	
 	private void cleanCarrito(HttpServletRequest request) {
         this.addCarrito(new ArrayList<>(), request);
     }
-	private void crear() {
+	/*
+	 * Metodo para crear usuarios
+	 * private void crear() {
 		System.out.println("SE VA A CREAR EL USUARIO");
 		Usuario user = new Usuario();
 		user.setNombre("Hiram Arellano");
@@ -151,5 +159,5 @@ public class VenderController {
 		user.agregar(p2);
 		
 		usuarioRepo.save(user);
-	}
+	}*/
 }

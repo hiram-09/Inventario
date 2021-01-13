@@ -6,6 +6,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -14,9 +15,10 @@ public class PrendaVendida {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
-	private String codigo;
-	private String modelo;
 	private Double precio;
+	@OneToOne
+	@JoinColumn(name="idPrenda")
+	private Prenda prenda;
 	@ManyToOne
 	@JoinColumn(name = "idVenta")
 	private Venta venta;
@@ -24,23 +26,25 @@ public class PrendaVendida {
 	@JoinColumn(name = "idUsuario")
 	private Usuario usuario;	
 	
-	public PrendaVendida(Integer id, String codigo, String modelo, Double precio, Venta venta, Usuario usuario) {
+		
+	public PrendaVendida(Integer id, Double precio, Prenda prenda, Venta venta, Usuario usuario) {
 		super();
 		this.id = id;
-		this.codigo = codigo;
-		this.modelo = modelo;
 		this.precio = precio;
+		this.prenda = prenda;
 		this.venta = venta;
 		this.usuario = usuario;
 	}
-	public PrendaVendida(String codigo, String modelo, Double precio, Venta venta, Usuario usuario) {
+
+	public PrendaVendida(Double precio, Prenda prenda, Venta venta, Usuario usuario) {
 		super();
-		this.codigo = codigo;
-		this.modelo = modelo;
 		this.precio = precio;
+		this.prenda = prenda;
 		this.venta = venta;
 		this.usuario = usuario;
 	}
+
+	public PrendaVendida() {}
 	
 	public Integer getId() {
 		return id;
@@ -48,24 +52,14 @@ public class PrendaVendida {
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	public String getCodigo() {
-		return codigo;
-	}
-	public void setCodigo(String codigo) {
-		this.codigo = codigo;
-	}
-	public String getModelo() {
-		return modelo;
-	}
-	public void setModelo(String modelo) {
-		this.modelo = modelo;
-	}
 	public Double getPrecio() {
 		return precio;
 	}
+
 	public void setPrecio(Double precio) {
 		this.precio = precio;
 	}
+
 	public Venta getVenta() {
 		return venta;
 	}
@@ -77,6 +71,20 @@ public class PrendaVendida {
 	}
 	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
+	}
+
+	public Prenda getPrenda() {
+		return prenda;
+	}
+
+	public void setPrenda(Prenda prenda) {
+		this.prenda = prenda;
+	}
+
+	@Override
+	public String toString() {
+		return "PrendaVendida [id=" + id + ", precio=" + precio + ", prenda=" + prenda + ", venta=" + venta
+				+ ", usuario=" + usuario + "]";
 	}
 	
 	

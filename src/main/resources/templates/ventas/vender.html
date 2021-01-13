@@ -26,12 +26,12 @@
           <h4 class="card-header div-encabezado" ><strong>Vender</strong></h4>    
           <div th:if="${mensaje} != null" th:text="${mensaje}" role="alert" class="alert alert-warning"></div>        
           <div class="card-body div-interno">
-            <form method="post" th:action="@{/vender/agregar}" th:object="${prenda}">              
+            <form id="inventario" name="inventario" method="post" th:action="@{/vender/agregar}" th:object="${prenda}">              
               <div class="row">
                 <div class="col-md-5"> 
                   <div class="form-group">
                     <label for="nombre">Código de barras</label>
-                    <input autofocus autocomplete="off" type="text" class="form-control" th:field="*{codigo}" id="codigo" name="codigo" placeholder="Código de barras" required="required">
+                    <input autofocus autocomplete="off" type="text" class="form-control input-in" th:field="*{codigo}" id="codigo" name="codigo" placeholder="Código de barras" required="required">
                   </div>
                 </div>
               </div>  
@@ -49,8 +49,8 @@
               <div class="row">
                 <div class="col-md-5"> 
                   <div class="form-group">
-                  	<h5 id="numPrendas">Número de prendas: <strong th:text="${numPrendas}"></strong></h1>
-                    <h1 id="total">Total: $<strong th:text="${total}"></strong></h1>
+                  	<h5 id="numPrendas">Número de prendas: <strong th:text="${numPrendas}"></strong></h5>
+                    <h1 id="total">Total: $<strong th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 2, 'POINT')}"></strong></h1>
                   </div>
                 </div>
               </div> 
@@ -59,7 +59,7 @@
                 <table class="table table-hover">
                     <thead class="table-head">
                         <tr>
-                        <th scope="col">Código</th>
+                        <th scope="col">Inventario</th>
                         <th scope="col">Marca</th>
                         <th scope="col">Modelo</th>
                         <th scope="col">Talla</th>
@@ -75,7 +75,7 @@
 	                        <td th:text="${prenda.modelo}"></td>
 	                        <td th:text="${prenda.talla}"></td>
 	                        <td th:text="${prenda.categoria.nombre}"></td>
-	                        <td th:text="'$'+${prenda.precioVenta}"></td>
+	                        <td th:text="'$'+${#numbers.formatDecimal(prenda.precioVenta, 0, 'COMMA', 2, 'POINT')}"></td>
 	                        <td>
 	                            <form th:action="@{/vender/quitar/} + ${it.index}" method="post">
 		                            <button type="submit" class="btn btn-danger">Eliminar</button>
@@ -97,6 +97,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> 
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	<script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>    
-    <script src="@{/tinymce/tinymce.min.js}"></script>
+    
   </body>
 </html>

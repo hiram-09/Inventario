@@ -21,8 +21,8 @@
 .table-head{
 	background-color: #61A9FF;
 	font-size: 1.1em;
-	color: white;
-	text-shadow: 0 0 3px #FF0000;
+	color:#212529;
+	text-shadow: 0 0 1px #FF0000;
 }
 .detalle{
 	background: #D6EBFF;
@@ -35,4 +35,19 @@
     border-bottom: 1px solid #61A9FF;
     width: 80%;
     text-align: center;
+}
+label{
+	font-size: 1.2em;
+	font-weight: bold;
+}
+.input-in, .detalle-input, .detalle{
+	font-size: 1.2em;
+	font-weight: bold;
+}
+th, td{
+	font-size: 1em;
+	font-weight: bold;
+}
+.container{
+	max-width: 1400px; 
 }

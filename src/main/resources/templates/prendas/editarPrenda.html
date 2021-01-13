@@ -28,7 +28,7 @@
           <div class="alert alert-warning" th:if="${mensaje != null}" th:text="${mensaje}" role="alert">          
           </div>                    
           <div class="card-body div-interno">
-            <form th:action="@{/inventario/editar}" th:method="post" th:object="${prenda}"> 
+            <form id="inventario" name="inventario" th:action="@{/inventario/editar}" th:method="post" th:object="${prenda}"> 
               <input type="hidden" th:field="*{id}">  
               <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger" role="alert">
               		Favor de corregir los siguientes errores:
@@ -40,26 +40,26 @@
               <div class="row">
                 <div class="col-md-3"> 
                   <div class="form-group">
-                    <label for="nombre">Código</label>
-                    <input type="text" class="form-control" disabled th:field="*{codigo}" id="codigo" name="codigo" placeholder="Escriba el código de barras" required="required">
+                    <label for="nombre">Inventario</label>
+                    <input type="text" class="form-control input-in" th:field="*{codigo}" id="codigo" name="codigo" placeholder="Escriba el código de barras" required="required">
                   </div>
                 </div>
                 <div class="col-md-3"> 
                   <div class="form-group">
                     <label for="nombre">Marca</label>
-                    <input type="text" class="form-control" th:field="*{marca}" id="marca" name="marca" placeholder="Escriba la marca" required="required">
+                    <input type="text" class="form-control input-in" th:field="*{marca}" id="marca" name="marca" placeholder="Escriba la marca" required="required">
                   </div>
                 </div>
                 <div class="col-md-3"> 
                   <div class="form-group">
                     <label for="nombre">Modelo</label>
-                    <input type="text" class="form-control" th:field="*{modelo}" id="modelo" name="modelo" placeholder="Escriba el modelo" required="required">
+                    <input type="text" class="form-control input-in" th:field="*{modelo}" id="modelo" name="modelo" placeholder="Escriba el modelo" required="required">
                   </div>
                 </div>
                 <div class="col-md-3"> 
                   <div class="form-group">
                     <label for="talla">Talla</label>
-                    <select class="form-control" th:field="*{talla}" name="talla" id="talla">
+                    <select class="form-control input-in" th:field="*{talla}" name="talla" id="talla">
                       <option value="0">--Seleccione--</option>
                       <option value="28">28</option>
                       <option value="30">30</option>
@@ -77,7 +77,7 @@
                 <div class="col-md-3"> 
                   <div class="form-group">
                     <label for="categoria">Categoría</label>
-                    <select class="form-control" name="categoria" id="categoria" th:field="*{categoria.id}">
+                    <select class="form-control input-in" name="categoria" id="categoria" th:field="*{categoria.id}">
                       <option th:each="categoria: ${categorias}"
                       		  th:value="${categoria.id}"
                       		  th:text="${categoria.nombre}"></option>
@@ -87,20 +87,21 @@
                 <div class="col-md-3"> 
                   <div class="form-group">
                     <label for="nombre">Precio de Compra</label>
-                    <input type="text" class="form-control" id="nombre" th:field="*{precioCompra}" name="precioCompra" placeholder="Escriba su nombre" required="required">
+                    <input type="text" class="form-control input-in" id="nombre" th:field="*{precioCompra}" name="precioCompra" placeholder="Escriba su nombre" required="required">
                   </div>
                 </div>
                 <div class="col-md-3"> 
                   <div class="form-group">
                     <label for="nombre">Precio de Venta</label>
-                    <input type="text" class="form-control" id="nombre" th:field="*{precioVenta}" name="precioVenta" placeholder="Escriba su nombre" required="required">
+                    <input type="text" class="form-control input-in" id="nombre" th:field="*{precioVenta}" name="precioVenta" placeholder="Escriba su nombre" required="required">
                   </div>
                 </div>
                 <div class="col-md-3"> 
                   <div class="form-group">
                     <label for="nombre">Estatus</label>
-                    <select class="form-control" name="estatus" id="estatus" th:field="*{estatus}">
+                    <select class="form-control input-in" name="estatus" id="estatus" th:field="*{estatus}">
                       <option value="Disponible">Disponible</option>
+                      <option value="Apartada">Apartada</option>
                       <option value="Vendida">Vendida</option>
                     </select>
                   </div>
@@ -108,7 +109,7 @@
                 <div class="col-md-12"> 
                     <div class="form-group">
                       <label for="detalles"><strong>Características</strong></label>          
-                      <textarea class="form-control" th:field="*{caracteristicas}" name="caracteristicas" id="caracteristicas" rows="4"></textarea>
+                      <textarea class="form-control  input-in" th:field="*{caracteristicas}" name="caracteristicas" id="caracteristicas" rows="4"></textarea>
                     </div> 
                   </div>
                  
@@ -125,6 +126,7 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script> 
-    <script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>     
+    <script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/util.js}"></script>     
   </body>
 </html>
