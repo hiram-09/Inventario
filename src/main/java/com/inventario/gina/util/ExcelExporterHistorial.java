@@ -71,11 +71,11 @@ public class ExcelExporterHistorial{
         XSSFFont font = workbook.createFont();
         font.setFontHeight(14);
         style.setFont(font);
-        CellStyle styleCodigo = workbook.createCellStyle();
+        /*CellStyle styleCodigo = workbook.createCellStyle();
         XSSFFont codigo = workbook.createFont();
         codigo.setFontHeight(25);
         codigo.setFontName("Bar-Code 39");
-        styleCodigo.setFont(codigo);
+        styleCodigo.setFont(codigo);*/
                  
         for (PrendaVendida pv : prendasVendidas) {
             Row row = sheet.createRow(rowCount++);

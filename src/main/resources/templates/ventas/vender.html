@@ -24,7 +24,10 @@
 	<br>   
        <div class="container div-encabezado">
           <h4 class="card-header div-encabezado" ><strong>Vender</strong></h4>    
-          <div th:if="${mensaje} != null" th:text="${mensaje}" role="alert" class="alert alert-warning"></div>        
+          <div th:classappend="'alert-' + (${clase != null} ? ${clase} : info)" th:if="${mensaje != null}"
+             th:text="${mensaje}"
+             class="alert">
+          </div>       
           <div class="card-body div-interno">
             <form id="inventario" name="inventario" method="post" th:action="@{/vender/agregar}" th:object="${prenda}">              
               <div class="row">

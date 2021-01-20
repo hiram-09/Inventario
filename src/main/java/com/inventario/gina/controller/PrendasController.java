@@ -76,12 +76,12 @@ public class PrendasController {
 		
 		Prenda prendaEncontrada = prendaService.buscarPorCodigo(prenda.getCodigo());
 		if(prendaEncontrada != null) {
-			attributes.addFlashAttribute("mensaje", "Ya existe una prenda con este código de barras").addFlashAttribute("clase", "alert-warning").addFlashAttribute("prenda", prenda);
+			attributes.addFlashAttribute("mensaje", "Ya existe una prenda con este código de barras").addFlashAttribute("clase", "warning");
 			return "redirect:/inventario/registro";
 		}
 		prenda.setFechaCreacion(new Date());
 		prendaService.guardar(prenda);
-		attributes.addFlashAttribute("clase", "alert-success").addFlashAttribute("mensaje", "Prenda guardada correctamente");
+		attributes.addFlashAttribute("clase", "success").addFlashAttribute("mensaje", "Prenda guardada correctamente");
 		return "redirect:/inventario/listado";
 	}
 	
@@ -89,7 +89,7 @@ public class PrendasController {
 	public String detalle(Model model, @PathVariable Integer id, RedirectAttributes attributes) {
 		Prenda prenda = prendaService.buscarPorId(id);
 		if(prenda == null) {
-			attributes.addFlashAttribute("mensaje", "No se encontró la prenda con el id");
+			attributes.addFlashAttribute("mensaje", "No se encontró la prenda con el id " + id).addFlashAttribute("clase", "warning");
 			return "redirect:prendas/inventarioPrendas";
 		}
 		model.addAttribute("prenda", prenda);
@@ -104,24 +104,28 @@ public class PrendasController {
 	
 	@PostMapping("/editar")
 	public String actualizar(Prenda prenda, RedirectAttributes att) {
-		System.out.println(prenda);
 		Prenda prendaBD = prendaService.buscarPorId(prenda.getId());
-		if(prendaBD != null) {
-			prendaBD.setCodigo(prenda.getCodigo());
-			prendaBD.setMarca(prenda.getMarca());
-			prendaBD.setModelo(prenda.getModelo());
-			prendaBD.setTalla(prenda.getTalla());
-			prendaBD.setCategoria(prenda.getCategoria());
-			prendaBD.setPrecioCompra(prenda.getPrecioCompra());
-			prendaBD.setPrecioVenta(prenda.getPrecioVenta());
-			prendaBD.setEstatus(prenda.getEstatus());
-			prendaBD.setCaracteristicas(prenda.getCaracteristicas());
+		try {
+			if(prendaBD != null) {
+				prendaBD.setCodigo(prenda.getCodigo());
+				prendaBD.setMarca(prenda.getMarca());
+				prendaBD.setModelo(prenda.getModelo());
+				prendaBD.setTalla(prenda.getTalla());
+				prendaBD.setCategoria(prenda.getCategoria());
+				prendaBD.setPrecioCompra(prenda.getPrecioCompra());
+				prendaBD.setPrecioVenta(prenda.getPrecioVenta());
+				prendaBD.setEstatus(prenda.getEstatus());
+				prendaBD.setCaracteristicas(prenda.getCaracteristicas());
+				
+				prendaService.guardar(prendaBD);
+				att.addFlashAttribute("mensaje", "Prenda Actualizada correctamente").addFlashAttribute("clase", "success");
+			}
 			
-			prendaService.guardar(prendaBD);
-			att.addFlashAttribute("mensaje", "Prenda Actualizada correctamente");
+			return "redirect:/inventario/listado";
+		} catch (Exception e) {
+			att.addFlashAttribute("mensaje", "Ocurrió un error al actualizar la prenda... Contacte a su administrador").addFlashAttribute("clase", "danger");
+			return "prendas/editar";
 		}
-		
-		return "redirect:/inventario/listado";
 	}
 	
 	@GetMapping("/export/excel/inventario")
@@ -142,8 +146,12 @@ public class PrendasController {
 	
 	@GetMapping("/eliminar/{id}")
 	public String eliminar(@PathVariable Integer id, RedirectAttributes att) {
-		prendaService.eliminar(id);
-		att.addFlashAttribute("mensaje", "Prenda eliminada correctamente");
+		try {
+			prendaService.eliminar(id);
+			att.addFlashAttribute("mensaje", "Prenda eliminada correctamente").addFlashAttribute("clase", "success");
+		} catch (Exception e) {
+			att.addFlashAttribute("mensaje", "Error al eliminar la prenda... Contacte a su administrador").addFlashAttribute("clase", "danger");
+		}
 		return "redirect:/inventario/listado";
 	}
 	@ModelAttribute

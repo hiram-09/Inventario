@@ -60,20 +60,20 @@ public class VenderController {
 		ArrayList<PrendaParaVender> carrito = this.getCarrito(request);
 		
 		if(prendaBuscadaPorCodigo == null) {
-			att.addFlashAttribute("mensaje", "No se encontró ninguna prenda con el código: "+prenda.getCodigo());
+			att.addFlashAttribute("mensaje", "No se encontró ninguna prenda con el código: "+prenda.getCodigo()).addFlashAttribute("clase", "warning");
 			return "redirect:/vender/";
 		}
 		if(prendaBuscadaPorCodigo.getEstatus().equals("Vendida")) {
-			att.addFlashAttribute("mensaje", "La prenda con código "+prenda.getCodigo() + " ya se vendió");
+			att.addFlashAttribute("mensaje", "La prenda con código "+prenda.getCodigo() + " ya se vendió").addFlashAttribute("clase", "warning");
 			return "redirect:/vender/";
 		}
 		if(prendaBuscadaPorCodigo.getEstatus().equals("Apartada")) {
-			att.addFlashAttribute("mensaje", "La prenda con código "+prenda.getCodigo() + " se encuentra apartada");
+			att.addFlashAttribute("mensaje", "La prenda con código "+prenda.getCodigo() + " se encuentra apartada").addFlashAttribute("clase", "warning");
 			return "redirect:/vender/";
 		}
 		for(PrendaParaVender prendaCarrito : carrito) {
 			if(prendaCarrito.getCodigo().equals(prenda.getCodigo())) {
-				att.addFlashAttribute("mensaje", "La prenda con código: "+prenda.getCodigo() + " ya se encuentra en el carrito");
+				att.addFlashAttribute("mensaje", "La prenda con código: "+prenda.getCodigo() + " ya se encuentra en el carrito").addFlashAttribute("clase", "warning");
 				return "redirect:/vender/";
 			}
 		}
@@ -105,6 +105,7 @@ public class VenderController {
 	@PostMapping("/terminar")
 	public String terminarVenta(HttpServletRequest request, RedirectAttributes att) {
 		ArrayList<PrendaParaVender> carrito = this.getCarrito(request);
+		boolean ventaRealizada = false;
 		for(PrendaParaVender prendaCarrito : carrito) {
 			Prenda prenda = prendaService.buscarPorCodigo(prendaCarrito.getCodigo());
 			
@@ -114,9 +115,13 @@ public class VenderController {
 			prenda.setEstatus("Vendida");
 			prendaService.guardar(prenda);
 			prendaVendidaService.guardar(new PrendaVendida(prendaCarrito.getPrecioVenta(), prenda, venta, usuario));
+			ventaRealizada = true;
 		}
 		this.cleanCarrito(request);
-		att.addFlashAttribute("mensaje","Venta realizada exitosamente!!!");
+		if(ventaRealizada)
+			att.addFlashAttribute("mensaje","Venta realizada exitosamente!!!").addFlashAttribute("clase", "success");
+		else 
+			att.addFlashAttribute("mensaje","No se vendieron productos").addFlashAttribute("clase", "warning");
 		return "redirect:/vender/";
 	}
 	

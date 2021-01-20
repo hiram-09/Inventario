@@ -42,7 +42,7 @@ public class VentasController {
 			prendasVendidas = prendaVendidaService.buscarPorFechaVenta(fecha);
 			for(PrendaVendida pv : prendasVendidas) total+=pv.getPrecio();
 		} catch (Exception e) {
-			System.out.println("Eror en el sistema: "+e);
+			System.out.println("Error en el sistema: "+e);
 		}
 		model.addAttribute("total", total);
 		model.addAttribute("ventas", prendasVendidas);

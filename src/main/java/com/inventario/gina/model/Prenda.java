@@ -32,8 +32,7 @@ public class Prenda {
 
 	
 	public Prenda(){}
-	
-	
+
 	public Prenda(Integer id, String codigo, String marca, Integer talla, String modelo, Double precioVenta,
 			Categorias categoria) {
 		super();

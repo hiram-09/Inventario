@@ -24,7 +24,10 @@
 	<br>   
        <div class="container div-encabezado">
           <h4 class="card-header div-encabezado" ><strong>Inventario</strong></h4>   
-          <div th:if="${mensaje!=null}" th:text="${mensaje}" class="alert alert-success" role="alert"></div> 
+          <div th:classappend="'alert-' + (${clase != null} ? ${clase} : info)" th:if="${mensaje != null}"
+             th:text="${mensaje}"
+             class="alert">
+          </div>
                     
           <div class="card-body div-interno">
             <a class="btn btn-primary" th:href="@{/inventario/registro}" role="button"><i class="fas fa-file" aria-hidden="true"></i> Nuevo</a> 

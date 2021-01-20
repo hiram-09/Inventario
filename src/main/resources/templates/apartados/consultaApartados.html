@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="favicon.ico">
+
+    <title>Tienda | Consulta Apartados</title>
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link th:href="@{/bootstrap/css/jumbotron.css}" rel="stylesheet">
+    <link th:href="@{/bootstrap/css/sticky-footer-navbar.css}" rel="stylesheet">
+    <link th:href="@{/styles/inventarioPrendas.css}" rel="stylesheet">
+    <link href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" rel="stylesheet">
+  </head>
+
+  <body  class="principal">
+    
+    <header th:insert="fragments/menu :: menu-principal"></header>
+	<main role="main" >  
+	<br>   
+       <div class="container div-encabezado">
+          <h4 class="card-header div-encabezado" ><strong>Consulta Apartados</strong></h4>   
+          <div th:classappend="'alert-' + (${clase != null} ? ${clase} : info)" th:if="${mensaje != null}"
+             th:text="${mensaje}"
+             class="alert">
+          </div>          
+          <div class="card-body div-interno">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalNuevoApartado" >Nuevo Apartado</button> 
+            <!-- <a class="btn btn-primary" th:href="@{/inventario/export/excel/inventario}" role="button"><i class="fas fa-file" aria-hidden="true"></i> Excel</a>-->
+            <hr>       
+            <form th:action="@{/apartados/buscar}" th:method="get">    
+	            <div class="row">
+	                <div class="col-md-3"> 
+	                    <input type="text" class="form-control input-in" id="codigo" name="codigo" placeholder="Búsqueda por inventario" >
+	                </div>
+	                <div class="col-md-3"> 
+	                    <input type="text" class="form-control input-in" id="nombre" name="nombre" placeholder="Búsqueda por cliente" >
+	                </div>
+	                <div class="col-md-3"> 
+	                    <button type="submit" title="Buscar" class="btn btn-primary">Buscar</button>  
+	                </div>
+	            </div>
+	        </form>
+            <hr>
+            <div class="row">
+                <div class="col-md-3"> 
+                    <label>Total de prendas: <strong th:text="${totalPrendas}"></strong></label>
+                </div>
+            </div>
+            
+            <table class="table table-hover">
+              <thead class="table-head">
+                <tr>
+                  <th scope="col">Inventario</th>
+                  <th scope="col">Marca</th>
+                  <th scope="col">Talla</th>
+                  <th scope="col">Modelo</th>
+                  <th scope="col">Precio</th>
+                  <th scope="col">Por pagar</th>
+                  <th scope="col">Estatus</th>
+                  <th scope="col">Nombre</th>
+                  <th scope="col">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="apartado: ${apartados}" th:title="${apartado.prenda.caracteristicas}">
+                  <th scope="row" th:text="${apartado.prenda.codigo}"></th>
+                  <td th:text="${apartado.prenda.marca}"></td>
+                  <td th:text="${apartado.prenda.talla}"></td>
+                  <td th:text="${apartado.prenda.modelo}"></td>
+                  <td th:text="'$' + ${#numbers.formatDecimal(apartado.precio, 0, 'COMMA', 2, 'POINT')}"></td>
+                  <td th:text="${apartado.estatus == 'Liquidada' ? '$0.00' : '$' + #numbers.formatDecimal(apartado.restante, 0, 'COMMA', 2, 'POINT')}"></td>
+                  <td th:text="${apartado.estatus}"></td>
+                  <td th:text="${apartado.nombre}"></td>
+                  <td>
+                    <a th:if="${apartado.estatus == 'Apartada'}" th:href="@{/apartados/abonar/{id} (id=${apartado.id})}" class="btn btn-success btn-sm" role="button" title="Abonar"><i class="fas fa-donate" aria-hidden="true"></i></a>
+                    <a th:unless="${apartado.estatus == 'Apartada'}" class="btn btn-secondary disabled btn-sm" disabled><i class="fas fa-donate"></i></a>
+                    <a th:href="@{/apartados/detalle/{id} (id=${apartado.id})}" class="btn btn-success btn-sm" role="button" title="Detalle"><i class="fas fa-file-alt" aria-hidden="true"></i></a>
+                    <a th:if="${apartado.estatus == 'Apartada'}" th:href="@{/apartados/cancelar/{id} (id=${apartado.id})}" onclick="return confirm('¿Estas seguro?')" class="btn btn-success btn-sm" role="button" title="Cancelar Apartado"><i class="fas fa-ban" aria-hidden="true"></i></a>
+                    <a th:unless="${apartado.estatus == 'Apartada'}" class="btn btn-secondary disabled btn-sm" ><i class="fas fa-ban" aria-hidden="true"></i></a>
+                  </td>
+                </tr>           
+              </tbody>
+            </table>
+          </div>
+      </div> <!-- /container -->
+	  <!-- Modal -->
+	  <div class="modal fade" id="modalNuevoApartado" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		  <div class="modal-dialog" role="document">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h5 class="modal-title" id="exampleModalLabel">Nuevo apartado</h5>
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          <span aria-hidden="true">&times;</span>
+		        </button>
+		      </div>
+		      <form th:action="@{/apartados/crear}" method="post">
+			      <div class="modal-body">
+			        <div class="form-group">
+			          <label for="recipient-name" class="col-form-label">Inventario:</label>
+			          <input autofocus autocomplete="off"  type="text" name="codigo" class="form-control" id="recipient-name">
+			        </div>
+			      </div>
+			      <div class="modal-footer">
+			        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+			        <button type="submit" class="btn btn-primary">Buscar</button>
+			      </div>
+			  </form>
+		    </div>
+		  </div>
+	  </div>
+	  <!-- /Modal -->
+    </main>
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>  
+    <script th:src="@{/js/util.js}"></script>     
+  </body>
+</html>

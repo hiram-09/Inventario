@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="favicon.ico">
+
+    <title>Tienda | Detalle apartado</title>
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link th:href="@{/bootstrap/css/jumbotron.css}" rel="stylesheet">
+    <link th:href="@{/styles/inventarioPrendas.css}" rel="stylesheet">
+    <link th:href="@{/bootstrap/css/sticky-footer-navbar.css}" rel="stylesheet">
+  </head>
+
+  <body class="principal">
+
+    <header th:insert="fragments/menu :: menu-principal"></header>
+
+    <main role="main">
+      <hr>
+      <div class="container"> 
+
+        <div class="row">
+          <div class="col-md-3 col-sm-8">            
+          	<div class="container div-encabezado">
+          		<h4 class="card-header div-encabezado letra"><strong>Prenda apartada</strong></h4>
+	           <div class="card-body div-interno">
+	                <h5 class="card-title"><strong>Inventario: </strong> <span th:text="${apartado.prenda.codigo}"></span></h5>
+	                <h5 class="card-title"><strong>Marca: </strong> <span th:text="${apartado.prenda.marca}"></span></h5>                
+	                <h5 class="card-title"><strong>Modelo: </strong><span th:text="${apartado.prenda.modelo}"></span></h5>
+	                <h5 class="card-title"><strong>Talla: </strong><span th:text="${apartado.prenda.talla}"></span></h5>
+	                <h5 class="card-title"><strong>Categoría: </strong><span th:text="${apartado.prenda.talla}"></span></h5>
+	                <h5 class="card-title"><strong>Precio: </strong><span th:text="'$' + ${#numbers.formatDecimal(apartado.prenda.precioVenta, 0, 'COMMA', 2, 'POINT')}"></span></h5>
+					<h5 class="card-title"><strong>Características: </strong><span th:text="${apartado.prenda.caracteristicas}"></span></h5>                            
+	              </div>
+          	</div>           
+          </div>
+          <div class="col-md-9">
+          <div class="row">
+            <div class="container div-encabezado"> 
+              <form name="inventario" id="inventario">
+              	<input type="hidden" name="id" id="id" th:field="${apartado.id}">  
+				<h4 class="card-header div-encabezado letra"><strong>Detalle Apartado</strong></h4>   
+		        <div class="card div-interno">          
+		          <div class="card-body letra">
+		              <div class="row">
+		                <div class="col-md-4"> 
+		                  <div class="form-group">
+		                    <label for="nombre">Nombre</label>
+		                    <input type="text" class="detalle-input" th:value="${apartado.nombre}" disabled>
+		                  </div>
+		                </div>
+		                <div class="col-md-4"> 
+		                  <div class="form-group">
+		                    <label for="telefono">Teléfono</label>
+		                    <input type="text" class="detalle-input" th:value="${apartado.telefono}" disabled>
+		                  </div>
+		                </div>
+		                <div class="col-md-4"> 
+		                  <div class="form-group">
+		                    <label for="estatus">Estatus</label>
+		                    <input type="text" name="estatus" class="detalle-input" th:value="${apartado.estatus}" disabled>
+		                  </div>
+		                </div>
+		                <div class="col-md-4"> 
+		                  <div class="form-group">
+		                    <label for="fecha_apartado">Fecha Apartado</label>
+		                    <input type="text" name="fecha_apartado" class="detalle-input" th:value="${#dates.format(apartado.fechaApartado, 'dd-MM-yyyy')}" disabled>
+		                  </div>
+		                </div>
+		                <div th:if="${apartado.estatus == 'Cancelada'}" class="col-md-4"> 
+		                  <div class="form-group">
+		                    <label for="fecha_cancelado">Fecha Cancelado</label>
+		                    <input type="text" name="fecha_cancelado" class="detalle-input" th:value="${#dates.format(apartado.fechaCancelado, 'dd-MM-yyyy')}" disabled>
+		                  </div>
+		                </div>
+		                <div th:if="${apartado.estatus == 'Liquidada'}" class="col-md-4"> 
+		                  <div class="form-group">
+		                    <label for="fecha_liquidado">Fecha Liquidado</label>
+		                    <input type="text" name="fecha_liquidado" class="detalle-input" th:value="${#dates.format(apartado.fechaLiquidado, 'dd-MM-yyyy')}" disabled>
+		                  </div>
+		                </div> 
+		             </div>
+		          </div>
+         		</div>
+         	  </form>
+         	
+				<h4 class="card-header div-encabezado letra"><strong>Abonos Realizados</strong></h4>   
+		        <div class="card div-interno">
+		          <div class="card-body letra">          
+		            <div class="row">
+			           <div class="col-md-3"> 
+			            <label>Por pagar: <strong th:text="'$' + ${#numbers.formatDecimal(apartado.restante, 0, 'COMMA', 2, 'POINT')}"></strong></label>
+			           </div>
+			        </div>
+			        <hr>
+		            <table class="table table-hover">
+		              <thead class="table-head">
+		                <tr>
+		                  <th scope="col"></th>
+		                  <th scope="col">Fecha</th>
+		                  <th scope="col">Importe</th>
+		                </tr>
+		              </thead>
+		              <tbody>
+		                <tr th:each="abono: ${apartado.abonos}">
+		                  <th scope="row"></th>
+		                  <td th:text="${#dates.format(abono.fecha, 'dd-MM-yyyy')}"></td>
+		                  <td th:text="'$' + ${#numbers.formatDecimal(abono.importe, 0, 'COMMA', 2, 'POINT')}"></td>
+		                </tr>           
+		              </tbody>
+		            </table>
+		          </div>
+		          </div>
+         		</div>
+         </div>
+         </div>
+         </div>
+        </div>
+    </main>
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script> 
+    <script>
+ 	    /**Convertir las cadenas en mayúsculas */
+	    $(document).ready(function() {
+	    	$("input").on("keypress", function() {
+	    		$input = $(this);
+	    		setTimeout(function() {
+	    			$input.val($input.val().toUpperCase());
+	    		}, 50);
+	    	});
+	    })
+		inventario = document.querySelector('#inventario');	    
+	    /**Permite sólo números */
+	    inventario.abono.addEventListener('keypress', function(e) {
+	    	if (!soloNumeros(event)) {
+	    		e.preventDefault();
+	    	}
+	    });
+	    inventario.telefono.addEventListener('keypress', function(e) {
+	    	if (!soloNumeros(event)) {
+	    		e.preventDefault();
+	    	}
+	    });
+	 	//Solo permite introducir numeros.
+	    function soloNumeros(e) {
+	    	var key = e.charCode;
+	    	//console.log(key);
+	    	return (key >= 48 && key <= 57) || key == 46;
+	    }
+     </script>      
+  </body>
+</html>
