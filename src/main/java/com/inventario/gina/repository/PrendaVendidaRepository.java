@@ -10,7 +10,13 @@ import org.springframework.data.repository.query.Param;
 import com.inventario.gina.model.PrendaVendida;
 
 public interface PrendaVendidaRepository extends JpaRepository<PrendaVendida, Integer> {
-	@Query("select p from PrendaVendida p where venta.fecha= :fecha group by venta.id")
+	
+	@Query("select p from PrendaVendida p where venta.fecha= :fecha")
 	List<PrendaVendida> getByFecha(@Param("fecha") Date fecha);
-	List<PrendaVendida> findByVentaFechaBetween(Date desde, Date hasta);
+	
+	List<PrendaVendida> findByVentaFechaBetweenOrderByVentaFechaDesc(Date desde, Date hasta);
+	
+	@Query("select pv from PrendaVendida pv where prenda.codigo = :codigo")
+	PrendaVendida getByCodigo(@Param("codigo") String codigo);
+
 }

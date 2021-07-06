@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.inventario.gina.model.Prenda;
@@ -17,7 +19,7 @@ public class PrendaServiceImpl implements IPrendaService {
 	
 	@Override
 	public List<Prenda> listarTodas() {
-		return (List<Prenda>) prendaRepository.findByEstatus("Disponible");
+		return (List<Prenda>) prendaRepository.findByEstatusOrderByFechaCreacionDesc("Disponible");
 	}
 
 	@Override
@@ -56,8 +58,18 @@ public class PrendaServiceImpl implements IPrendaService {
 	}
 
 	@Override
-	public List<Prenda> buscarByExample(Example<Prenda> example) {
-		return prendaRepository.findAll(example); 
+	public Page<Prenda> buscarByExample(Example<Prenda> example, Pageable page) {
+		return prendaRepository.findAll(example, page); 
+	}
+
+	@Override
+	public void actualizarPrendas(List<Prenda> prendas) {
+		prendaRepository.saveAll(prendas);		
+	}
+
+	@Override
+	public Page<Prenda> buscarTodas(Pageable page) {
+		return prendaRepository.findByEstatusOrderByFechaCreacionDesc("Disponible", page);
 	}
 
 }

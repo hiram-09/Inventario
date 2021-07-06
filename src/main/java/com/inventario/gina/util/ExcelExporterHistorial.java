@@ -14,21 +14,25 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import com.inventario.gina.model.ApartadosAbonos;
 import com.inventario.gina.model.PrendaVendida;
  
 public class ExcelExporterHistorial{
     private XSSFWorkbook workbook;
     private XSSFSheet sheet;
     private List<PrendaVendida> prendasVendidas;
+    private List<ApartadosAbonos> apartadosAbonos;
+    private int rowCount = 1;
      
-    public ExcelExporterHistorial(List<PrendaVendida> prendasVendidas) {
+    public ExcelExporterHistorial(List<PrendaVendida> prendasVendidas, List<ApartadosAbonos> apartadosAbonos) {
         this.prendasVendidas = prendasVendidas;
+        this.apartadosAbonos = apartadosAbonos;
         workbook = new XSSFWorkbook();
     }
  
  
     private void writeHeaderLine() {
-        sheet = workbook.createSheet("PrendaVendida");
+        sheet = workbook.createSheet("Vendidos");
          
         Row row = sheet.createRow(0);
          
@@ -37,16 +41,33 @@ public class ExcelExporterHistorial{
         font.setBold(true);
         font.setFontHeight(16);
         style.setFont(font);
-       createCell(row, 0, "INVENTARIO", style);      
+        createCell(row, 0, "INVENTARIO", style);      
         createCell(row, 1, "MARCA", style);       
         createCell(row, 2, "MODELO", style);    
         createCell(row, 3, "CATEGORIA", style);
         createCell(row, 4, "VENDEDOR", style);
         createCell(row, 5, "PRECIO", style);
         createCell(row, 6, "FECHA DE VENTA", style);
+        createCell(row, 7, "CARACTERISTICAS", style);
          
     }
-     
+    
+    private void writeHeaderLineAbonos() {
+    	sheet = workbook.createSheet("Apartados"); 
+        Row row = sheet.createRow(0);
+        
+        CellStyle style = workbook.createCellStyle();
+        XSSFFont font = workbook.createFont();
+        font.setBold(true);
+        font.setFontHeight(16);
+        style.setFont(font);
+        createCell(row, 0, "FECHA APARTADO", style);      
+        createCell(row, 1, "NOMBRE DEL CLIENTE", style);       
+        createCell(row, 2, "FECHA ABONO", style); 
+        createCell(row, 3, "IMPORTE", style); 
+         
+    }
+    
     private void createCell(Row row, int columnCount, Object value, CellStyle style) {
         sheet.autoSizeColumn(columnCount);
         Cell cell = row.createCell(columnCount);
@@ -65,21 +86,17 @@ public class ExcelExporterHistorial{
     }
      
     private void writeDataLines() {
-        int rowCount = 1;
+        rowCount = 1;
  
         CellStyle style = workbook.createCellStyle();
         XSSFFont font = workbook.createFont();
         font.setFontHeight(14);
         style.setFont(font);
-        /*CellStyle styleCodigo = workbook.createCellStyle();
-        XSSFFont codigo = workbook.createFont();
-        codigo.setFontHeight(25);
-        codigo.setFontName("Bar-Code 39");
-        styleCodigo.setFont(codigo);*/
+        int columnCount;
                  
         for (PrendaVendida pv : prendasVendidas) {
             Row row = sheet.createRow(rowCount++);
-            int columnCount = 0;
+            columnCount = 0;
              
             createCell(row, columnCount++, pv.getPrenda().getCodigo(), style);
             createCell(row, columnCount++, pv.getPrenda().getMarca(), style);
@@ -88,13 +105,35 @@ public class ExcelExporterHistorial{
             createCell(row, columnCount++, pv.getUsuario().getNombre(), style);
             createCell(row, columnCount++, pv.getPrecio(), style);
             createCell(row, columnCount++, pv.getVenta().getFecha(), style);
+            createCell(row, columnCount++, pv.getPrenda().getCaracteristicas(), style);
              
+        }
+    }
+    private void writeDataLinesAbonos() {
+    	rowCount = 1;;
+        CellStyle style = workbook.createCellStyle();
+        XSSFFont font = workbook.createFont();
+        font.setFontHeight(14);
+        style.setFont(font);
+        
+        int columnCount; 
+        for (ApartadosAbonos aa : apartadosAbonos) {
+        	System.out.println(aa);
+            Row row = sheet.createRow(rowCount++);
+            columnCount = 0;
+             
+            createCell(row, columnCount++, aa.getFechaApartado(), style);
+            createCell(row, columnCount++, aa.getNombreCliente(), style);
+            createCell(row, columnCount++, aa.getFechaAbono(), style);
+            createCell(row, columnCount++, aa.getImporte(), style);             
         }
     }
      
     public void export(HttpServletResponse response) throws IOException {
         writeHeaderLine();
         writeDataLines();
+        writeHeaderLineAbonos();
+        writeDataLinesAbonos();
          
         ServletOutputStream outputStream = response.getOutputStream();
         workbook.write(outputStream);

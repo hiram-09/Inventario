@@ -33,7 +33,7 @@
 	                <h5 class="card-title"><strong>Marca: </strong> <span th:text="${apartado.prenda.marca}"></span></h5>                
 	                <h5 class="card-title"><strong>Modelo: </strong><span th:text="${apartado.prenda.modelo}"></span></h5>
 	                <h5 class="card-title"><strong>Talla: </strong><span th:text="${apartado.prenda.talla}"></span></h5>
-	                <h5 class="card-title"><strong>Categoría: </strong><span th:text="${apartado.prenda.talla}"></span></h5>
+	                <h5 class="card-title"><strong>Categoría: </strong><span th:text="${apartado.prenda.categoria.nombre}"></span></h5>
 	                <h5 class="card-title"><strong>Precio: </strong><span th:text="'$' + ${#numbers.formatDecimal(apartado.prenda.precioVenta, 0, 'COMMA', 2, 'POINT')}"></span></h5>
 					<h5 class="card-title"><strong>Características: </strong><span th:text="${apartado.prenda.caracteristicas}"></span></h5>                            
 	              </div>

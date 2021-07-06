@@ -61,19 +61,7 @@
                 <div class="col-md-3"> 
                   <div class="form-group">
                     <label for="talla">Talla</label>
-                    <select class="form-control input-in" th:field="*{talla}" name="talla" id="talla">
-                      <option value="0">--Seleccione--</option>
-                      <option value="28">28</option>
-                      <option value="30">30</option>
-                      <option value="32">32</option>
-                      <option value="34">34</option>
-                      <option value="36">36</option>
-                      <option value="38">38</option>
-                      <option value="40">40</option>
-                      <option value="42">42</option>
-                      <option value="44">44</option>
-                      <option value="46">46</option>
-                    </select>
+                    <input type="text" class="form-control input-in" th:field="*{talla}" name="talla" id="talla" maxlength="3"> 
                   </div>
                 </div>
                 <div class="col-md-3"> 

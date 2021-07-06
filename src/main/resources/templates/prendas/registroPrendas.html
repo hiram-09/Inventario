@@ -43,37 +43,25 @@
                 <div class="col-md-3"> 
                   <div class="form-group">
                     <label for="codigo">Inventario</label>
-                    <input type="text" class="form-control input-in" th:field="*{codigo}" id="codigo" name="codigo" placeholder="Escriba el código de barras" required="required">
+                    <input type="text" autocomplete="off" maxlength="45" class="form-control input-in" th:field="*{codigo}" id="codigo" name="codigo" placeholder="Escriba el inventario" required="required">
                   </div>
                 </div>
                 <div class="col-md-3"> 
                   <div class="form-group">
                     <label for="marca">Marca</label>
-                    <input type="text" class="form-control input-in" th:field="*{marca}" id="marca" name="marca" placeholder="Escriba la marca" required="required">
+                    <input type="text" maxlength="45" class="form-control input-in" th:field="*{marca}" id="marca" name="marca" placeholder="Escriba la marca" required="required">
                   </div>
                 </div>
                 <div class="col-md-3"> 
                   <div class="form-group">
                     <label for="modelo">Modelo</label>
-                    <input type="text" class="form-control input-in" th:field="*{modelo}" id="modelo" name="modelo" placeholder="Escriba el modelo" required="required">
+                    <input type="text" autocomplete="off" maxlength="45" class="form-control input-in" th:field="*{modelo}" id="modelo" name="modelo" placeholder="Escriba el modelo" required="required">
                   </div>
                 </div>
                 <div class="col-md-3"> 
                   <div class="form-group">
                     <label for="talla">Talla</label>
-                    <select class="form-control input-in" th:field="*{talla}" name="talla" id="talla">
-                      <option value="0">--Seleccione--</option>
-                      <option value="28">28</option>
-                      <option value="30">30</option>
-                      <option value="32">32</option>
-                      <option value="34">34</option>
-                      <option value="36">36</option>
-                      <option value="38">38</option>
-                      <option value="40">40</option>
-                      <option value="42">42</option>
-                      <option value="44">44</option>
-                      <option value="46">46</option>
-                    </select>
+                    <input type="text" class="form-control input-in" th:field="*{talla}" name="talla" id="talla" maxlength="3">                      
                   </div>
                 </div>
                 <div class="col-md-3"> 
@@ -111,7 +99,7 @@
                 <div class="col-md-12"> 
                     <div class="form-group">
                       <label for="caracteristicas"><strong>Características</strong></label>          
-                      <textarea class="form-control input-in" th:field="*{caracteristicas}" name="caracteristicas" id="caracteristicas" rows="4"></textarea>
+                      <textarea maxlength="200" class="form-control input-in" th:field="*{caracteristicas}" name="caracteristicas" id="caracteristicas" rows="4"></textarea>
                     </div> 
                   </div>
                  

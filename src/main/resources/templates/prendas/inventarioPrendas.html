@@ -31,7 +31,7 @@
                     
           <div class="card-body div-interno">
             <a class="btn btn-primary" th:href="@{/inventario/registro}" role="button"><i class="fas fa-file" aria-hidden="true"></i> Nuevo</a> 
-            <a class="btn btn-primary" th:href="@{/inventario/export/excel/inventario}" role="button"><i class="fas fa-file" aria-hidden="true"></i> Excel</a>
+            <a class="btn btn-primary" th:href="@{/inventario/export/excel/inventario/(page=${prendas.number})}" role="button"><i class="fas fa-file" aria-hidden="true"></i> Excel</a>
             <hr>       
             <form th:action="@{/inventario/buscar}" th:method="get" th:object="${prenda}">    
 	            <div class="row">
@@ -91,6 +91,20 @@
                 </tr>           
               </tbody>
             </table>
+            <nav th:if="${prendas.totalPages > 0}" aria-label="Page navigation example" >
+				<ul class="pagination justify-content-center">
+					<li class="page-item" th:classappend="${prendas.number == 0 ? 'disabled' : ''}">
+						<a th:href="@{/inventario/listadoPaginado(page=${prendas.number - 1})}" class="page-link">Anterior</a>
+					</li>
+								
+					<li th:if="${totalPrendas > 30}" class="page-item" th:classappend="${i eq prendas.number + 1} ? 'active'" th:each="i : ${#numbers.sequence( 1, prendas.totalPages, 1)}">
+						<a class="page-link" th:href="@{/inventario/listadoPaginado?page={tmpPag} (tmpPag=${i-1}) }" th:text="${i}" th:title="${'Page '+ i}" data-toggle="tooltip"></a>
+					</li>
+					<li class="page-item" th:classappend="${prendas.number == (prendas.totalPages - 1) ? 'disabled' : ''}">
+						<a th:href="@{/inventario/listadoPaginado(page=${prendas.number + 1})}" class="page-link">Siguiente</a>
+					</li>
+				</ul>
+			</nav>
           </div>
       </div> <!-- /container -->
 

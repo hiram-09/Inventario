@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="favicon.ico">
+
+    <title>Tienda | Cambios</title>
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link th:href="@{/bootstrap/css/jumbotron.css}" rel="stylesheet">
+    <link th:href="@{/bootstrap/css/sticky-footer-navbar.css}" rel="stylesheet">
+    <link th:href="@{/styles/inventarioPrendas.css}" rel="stylesheet">
+    <link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet" >
+  </head>
+
+  <body class="principal">
+  	<header th:insert="fragments/menu :: menu-principal"></header>
+    <main role="main">     
+      <hr>
+      <div class="container div-encabezado"> 
+         <h4 class="card-header div-encabezado"><strong>Cambio</strong></h4>   
+         <div th:classappend="'alert-' + (${clase != null} ? ${clase} : info)" th:if="${mensaje != null}"
+             th:text="${mensaje}"
+             class="alert">
+          </div>            
+          <div class="card-body div-interno">
+          	<form th:action="@{/cambios/buscar/devuelta}" method="get">
+          	 <div class="row">
+                <div class="col-md-3"> 
+                	<label for="desde">Prenda devuelta</label>
+                    <input type="text" autocomplete="off" class="form-control" id="codigo" name="codigoDevuelto" placeholder="Inventario prenda devuelta" required="required">
+                </div>
+              </div>
+            </form>            
+            <hr>
+            <table class="table table-hover">
+              <thead class="table-head">
+                <tr>
+                  <th scope="col">Inventario</th>
+                  <th scope="col">Marca</th>
+                  <th scope="col">Modelo</th>
+                  <th scope="col">Categoria</th>
+                  <th scope="col">Vendedor</th>
+                  <th scope="col">Precio</th>
+                  <th scope="col">Fecha de Venta</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:if="${prendaDevuelta} != null">
+                  <td th:text="${prendaDevuelta.prenda.codigo}"></td>
+                  <td th:text="${prendaDevuelta.prenda.marca}"></td>
+                  <td th:text="${prendaDevuelta.prenda.modelo}"></td>
+                  <td th:text="${prendaDevuelta.prenda.categoria.nombre}"></td>
+                  <td th:text="${prendaDevuelta.usuario.nombre}"></td>
+                  <td th:text="'$' + ${#numbers.formatDecimal(prendaDevuelta.precio, 0, 'COMMA', 2, 'POINT')}"></td>
+                  <td th:text="${#dates.format(prendaDevuelta.venta.fecha, 'dd-MM-yyyy')}"></td>
+                </tr>
+              </tbody>
+            </table>            
+          </div>
+          <hr>
+          <div class="card-body div-interno">
+          	<form th:action="@{/cambios/buscar/cambio}" method="get">
+          	 <div class="row">
+                <div class="col-md-3"> 
+                	<label for="desde">Prenda a cambio</label>
+                    <input type="text" autocomplete="off" class="form-control" id="codigo" name="codigoCambio" placeholder="Inventario prenda a cambio" required="required">
+                </div>
+              </div>
+            </form>            
+            <hr>
+            <table class="table table-hover">
+              <thead class="table-head">
+                <tr>
+                  <th scope="col">Inventario</th>
+                  <th scope="col">Marca</th>
+                  <th scope="col">Modelo</th>
+                  <th scope="col">Talla</th>
+                  <th scope="col">Categoría</th>
+                  <th scope="col">Precio</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:if="${prendaCambio} != null">
+                  <td th:text="${prendaCambio.codigo}"></td>
+                  <td th:text="${prendaCambio.marca}"></td>
+                  <td th:text="${prendaCambio.modelo}"></td>
+                  <td th:text="${prendaCambio.talla}"></td>
+                  <td th:text="${prendaCambio.categoria.nombre}"></td>
+                  <td th:text="'$' + ${#numbers.formatDecimal(prendaCambio.precioVenta, 0, 'COMMA', 2, 'POINT')}"></td>
+                </tr>
+              </tbody>
+            </table>            
+          </div>
+          <hr>
+          <div class="card-body div-interno" th:if="${mensaje == null}">
+          	<form th:action="@{/cambios/guardar}" method="get">
+	          	<div align="center" th:if="${prendaDevuelta} != null and ${prendaCambio} != null"> 
+	          		<input type="hidden" th:value="${prendaDevuelta.prenda.codigo}" name="codigoDevuelto">
+	          		<input type="hidden" th:value="${prendaCambio.codigo}" name="codigoCambio">
+	         		<div class="col-md-1"> 
+	                	<label for="buscar"> </label>
+	                    <input type="submit" name="cambio" id="cambio" class="btn btn-primary" value="Realizar Cambio">         
+	                </div>       
+	          	</div> 
+	        </form>
+          </div>
+      </div> <!-- /container -->
+
+    </main>
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> 
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>    
+    <script th:src="@{/js/util.js}"></script>
+  </body>
+</html>

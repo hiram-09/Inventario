@@ -25,4 +25,9 @@ public class VentaServiceImpl implements IVentaService {
 		return ventaRepository.save(venta);
 	}
 
+	@Override
+	public void actualizaFechaVenta(Venta venta) {
+		ventaRepository.save(venta);		
+	}
+
 }

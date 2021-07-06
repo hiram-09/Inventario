@@ -13,15 +13,16 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.data.domain.Page;
 
 import com.inventario.gina.model.Prenda;
 
 public class ExcelExporterInventario {
 	 private XSSFWorkbook workbook;
 	    private XSSFSheet sheet;
-	    private List<Prenda> prendas;
+	    private Page<Prenda> prendas;
 	     
-	    public ExcelExporterInventario(List<Prenda> prendas) {
+	    public ExcelExporterInventario(Page<Prenda> prendas) {
 	        this.prendas = prendas;
 	        workbook = new XSSFWorkbook();
 	    }
@@ -45,7 +46,7 @@ public class ExcelExporterInventario {
 	        createCell(row, 4, "CATEGORIA", style);
 	        createCell(row, 5, "PRECIO DE COMPRA", style);
 	        createCell(row, 6, "PRECIO DE VENTA", style);
-	         
+	        createCell(row, 7, "CARACTERISTICAS", style); 
 	    }
 	     
 	    private void createCell(Row row, int columnCount, Object value, CellStyle style) {
@@ -84,7 +85,7 @@ public class ExcelExporterInventario {
 	            createCell(row, columnCount++, p.getCategoria().getNombre(), style);
 	            createCell(row, columnCount++, p.getPrecioCompra(), style);
 	            createCell(row, columnCount++, p.getPrecioVenta(), style);
-	             
+	            createCell(row, columnCount++, p.getCaracteristicas(), style); 
 	        }
 	    }
 	     

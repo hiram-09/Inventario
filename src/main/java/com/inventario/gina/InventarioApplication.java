@@ -7,12 +7,13 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 
 @SpringBootApplication
 public class InventarioApplication extends SpringBootServletInitializer{
-
+	/*
+	 * Para generar WAR
 	@Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
         return application.sources(InventarioApplication.class);
     }
-	
+	*/
 	public static void main(String[] args) {
 		SpringApplication.run(InventarioApplication.class, args);
 	}

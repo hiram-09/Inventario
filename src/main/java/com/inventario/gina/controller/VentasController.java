@@ -17,10 +17,18 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.inventario.gina.model.Apartados;
+import com.inventario.gina.model.ApartadosAbonos;
 import com.inventario.gina.model.PrendaVendida;
+import com.inventario.gina.model.Venta;
+import com.inventario.gina.service.IApartadosService;
 import com.inventario.gina.service.IPrendaVendidaService;
+import com.inventario.gina.service.IVentaService;
 import com.inventario.gina.util.ExcelExporterHistorial;
 import com.inventario.gina.util.Utileria;
 
@@ -31,21 +39,35 @@ public class VentasController {
 	@Autowired
 	IPrendaVendidaService prendaVendidaService;
 	
+	@Autowired
+	IVentaService ventaService;
+	
+	@Autowired
+	IApartadosService apartadoService;
+		
 	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	
 	@GetMapping("/dia")
 	public String ventasDelDia(Model model) {
 		List<PrendaVendida> prendasVendidas = null;
+		List<Apartados> prendasApartadas = null;
+		List<ApartadosAbonos> apartadosAbonos = null;
 		Double total = 0.0;
 		try {
 			Date fecha = dateFormat.parse(dateFormat.format(new Date()));
 			prendasVendidas = prendaVendidaService.buscarPorFechaVenta(fecha);
 			for(PrendaVendida pv : prendasVendidas) total+=pv.getPrecio();
+			
+			apartadosAbonos = apartadoService.buscarPorFechaAbono(fecha);
+			for(ApartadosAbonos apartadoAbono : apartadosAbonos) total += apartadoAbono.getImporte();
+			
 		} catch (Exception e) {
 			System.out.println("Error en el sistema: "+e);
 		}
 		model.addAttribute("total", total);
 		model.addAttribute("ventas", prendasVendidas);
+		model.addAttribute("apartados", prendasApartadas);
+		model.addAttribute("abonos", apartadosAbonos);
 		return "ventas/ventasDelDia";
 	}
 	
@@ -54,32 +76,63 @@ public class VentasController {
 		return "ventas/historialVentas";
 	}
 	
-	@PostMapping("/buscar")
-	public String busquedaPorFechas(@RequestParam Date desde, @RequestParam Date hasta, Model model) {
-		Double total = 0.0;
-		List<PrendaVendida> prendasVendidas = prendaVendidaService.buscarPorFechas(desde, hasta);
-		for(PrendaVendida pv : prendasVendidas) total+=pv.getPrecio();
-		model.addAttribute("ventas", prendasVendidas);
-		model.addAttribute("totalPrendas", prendasVendidas.size());
-		model.addAttribute("totalVentas", total);
-		model.addAttribute("fechaDesde", Utileria.convertirFecha(desde));
-		model.addAttribute("fechaHasta", Utileria.convertirFecha(hasta));
+	@RequestMapping(value="/buscar", method = {RequestMethod.GET, RequestMethod.POST})
+	public String busquedaPorFechas(@RequestParam Date desde, @RequestParam Date hasta, @RequestParam(required = false) String mensaje, Model model, RedirectAttributes att) {
+		try {
+			Double total = 0.0;
+			
+			List<PrendaVendida> prendasVendidas = prendaVendidaService.buscarPorFechas(desde, hasta);
+			for(PrendaVendida pv : prendasVendidas) total+=pv.getPrecio();
+			
+			List<ApartadosAbonos> apartados = apartadoService.buscarPorFechaAbono(desde, hasta);
+			for(ApartadosAbonos apartado : apartados) total += apartado.getImporte();
+			
+			model.addAttribute("ventas", prendasVendidas);
+			model.addAttribute("apartados", apartados);
+			model.addAttribute("totalPrendas", prendasVendidas.size());
+			model.addAttribute("totalApartados", apartados.size());
+			model.addAttribute("totalVentas", total);
+			model.addAttribute("fechaDesde", Utileria.convertirFecha(desde));
+			model.addAttribute("fechaHasta", Utileria.convertirFecha(hasta));
+			model.addAttribute("mensaje",mensaje);
+		} catch (Exception e) {
+			System.out.println(e);
+		}
 		return "ventas/historialVentas";
 	}
 	
-	@GetMapping("/export/excel/{desde}/{hasta}")
-    public void exportToExcel(HttpServletResponse response, @PathVariable Date desde, @PathVariable Date hasta) throws IOException {
+	@PostMapping("/export/excel")
+    public void exportToExcel(HttpServletResponse response, @RequestParam("hdDesde") Date desde, @RequestParam("hdHasta") Date hasta) throws IOException {
         response.setContentType("application/octet-stream");
         String headerKey = "Content-Disposition";
         String headerValue = "attachment; filename=PrendasVendidas_" + Utileria.convertirFecha(desde) + "_" + Utileria.convertirFecha(hasta) + ".xlsx";
         response.setHeader(headerKey, headerValue);
          
         List<PrendaVendida> prendasVendidas = prendaVendidaService.buscarPorFechas(desde, hasta);
+        List<ApartadosAbonos> apartadosAbonos = apartadoService.buscarPorFechaAbono(desde, hasta);
          
-        ExcelExporterHistorial excelExporter = new ExcelExporterHistorial(prendasVendidas);
+        ExcelExporterHistorial excelExporter = new ExcelExporterHistorial(prendasVendidas, apartadosAbonos);
          
         excelExporter.export(response);    
-    }  
+    } 
+	
+	@PostMapping("/actualiza_fecha")
+	public ModelAndView actualizaFecha(@RequestParam("idPrendaVendida") Integer id, @RequestParam("fVenta") Date fecha, @RequestParam("desde") Date desde, @RequestParam("hasta") Date hasta, RedirectAttributes att) {	
+		ModelAndView model = new ModelAndView("redirect:/ventas/buscar");
+		try{
+			PrendaVendida pv = prendaVendidaService.buscarPorId(id);
+			Venta venta = pv.getVenta();
+			venta.setFecha(fecha);
+			ventaService.actualizaFechaVenta(venta);		
+			model.addObject("desde", Utileria.convertirFecha(desde));
+			model.addObject("hasta", Utileria.convertirFecha(hasta));
+			model.addObject("mensaje", "La fecha se actualizó correctamente");
+		}catch(Exception e) {
+			model.addObject("mensaje", "Ocurrió un error al actualizar la fecha");
+		}
+		
+		return model;
+	}
  
 	@InitBinder
 	public void initBinder(WebDataBinder webDataBinder) {

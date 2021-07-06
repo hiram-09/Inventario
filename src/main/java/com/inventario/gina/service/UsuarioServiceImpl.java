@@ -17,4 +17,14 @@ public class UsuarioServiceImpl implements IUsuarioService {
 		return usuariosRepository.findById(id).orElse(null);				
 	}
 
+	@Override
+	public Usuario buscarPorUsername(String username) {
+		return usuariosRepository.findByUsername(username);
+	}
+
+	@Override
+	public void guardar(Usuario usuario) {
+		usuariosRepository.save(usuario);		
+	}
+
 }

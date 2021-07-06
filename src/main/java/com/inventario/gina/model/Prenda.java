@@ -1,12 +1,14 @@
 package com.inventario.gina.model;
 
 import java.util.Date;
+import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -18,7 +20,7 @@ public class Prenda {
 	private Integer id;
 	private String codigo;
 	private String marca;
-	private Integer talla;
+	private String talla;
 	private String modelo;
 	private String estatus;
 	private Double precioCompra;
@@ -29,12 +31,16 @@ public class Prenda {
 	@OneToOne
 	@JoinColumn(name = "idCategoria")
 	private Categorias categoria;
+	
+	@OneToMany
+	@JoinColumn(name = "prenda")
+	private Set<PrendaApartada> prendaApartada;
 
 	
 	public Prenda(){}
 
-	public Prenda(Integer id, String codigo, String marca, Integer talla, String modelo, Double precioVenta,
-			Categorias categoria) {
+	public Prenda(Integer id, String codigo, String marca, String talla, String modelo, Double precioVenta,
+			Categorias categoria, String estatus) {
 		super();
 		this.id = id;
 		this.codigo = codigo;
@@ -43,6 +49,7 @@ public class Prenda {
 		this.modelo = modelo;
 		this.precioVenta = precioVenta;
 		this.categoria = categoria;
+		this.estatus = estatus;
 	}
 
 
@@ -70,11 +77,11 @@ public class Prenda {
 		this.marca = marca;
 	}
 
-	public Integer getTalla() {
+	public String getTalla() {
 		return talla;
 	}
 
-	public void setTalla(Integer talla) {
+	public void setTalla(String talla) {
 		this.talla = talla;
 	}
 
@@ -134,11 +141,12 @@ public class Prenda {
 		this.fechaCreacion = fechaCreacion;
 	}
 
-	@Override
-	public String toString() {
-		return "Prenda [id=" + id + ", codigo=" + codigo + ", marca=" + marca + ", talla=" + talla + ", modelo="
-				+ modelo + ", estatus=" + estatus + ", precioCompra=" + precioCompra + ", precioVenta=" + precioVenta
-				+ ", caracteristicas=" + caracteristicas + ", categoria=" + categoria + "]";
+	public Set<PrendaApartada> getPrendaApartada() {
+		return prendaApartada;
+	}
+
+	public void setPrendaApartada(Set<PrendaApartada> prendaApartada) {
+		this.prendaApartada = prendaApartada;
 	}
 	
 }

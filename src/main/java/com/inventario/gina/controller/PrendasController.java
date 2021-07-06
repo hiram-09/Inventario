@@ -9,10 +9,17 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -43,32 +50,37 @@ public class PrendasController {
 		return "prendas/inventarioPrendas";
 	}
 	
+	@GetMapping("/listadoPaginado")
+	public String listarInventarioPaginado(Model model, Pageable page) {
+		Page<Prenda> prendas = prendaService.buscarTodas(page);
+		model.addAttribute("prendas", prendas);
+		model.addAttribute("totalPrendas", prendas.getTotalElements());
+		model.addAttribute("prenda", new Prenda());
+		return "prendas/inventarioPrendas";
+	}
+	
 	@GetMapping("/registro")
 	public String registroPrenda(Prenda prenda) {
 		return "prendas/registroPrendas";
 	}
 	
 	@GetMapping("/buscar")
-	public String buscar(@ModelAttribute Prenda prenda, Model model) {
-		List<Prenda> prendas =  null;
-		if(!prenda.getCodigo().equals("") && !prenda.getMarca().equals("")) {
-			prendas = prendaService.busquedaPorCodigoMarca(prenda.getCodigo(), prenda.getMarca());
-		}else if(!prenda.getCodigo().equals("") && prenda.getMarca().equals("")) {
-			prendas = prendaService.busquedaPorCodigo(prenda.getCodigo());
-		}else if(prenda.getCodigo().equals("") && !prenda.getMarca().equals("")) {
-			prendas = prendaService.busquedaPorMarca(prenda.getMarca());
-		}else {
-			prendas = prendaService.listarTodas();
-		}
+	public String buscar(Prenda prenda, Model model, Pageable page) {
+		Page<Prenda> prendas =  null;
+		
+		ExampleMatcher matcher = ExampleMatcher.matching().withMatcher("marca", ExampleMatcher.GenericPropertyMatchers.contains());
+		Example<Prenda> example = Example.of(prenda, matcher);
+		
+		prendas = prendaService.buscarByExample(example, page);
 		
 		model.addAttribute("prenda", prenda);
 		model.addAttribute("prendas", prendas);
-		model.addAttribute("totalPrendas", prendas.size());
+		model.addAttribute("totalPrendas", prendas.getTotalElements());
 		return "prendas/inventarioPrendas";
 	}
 	
 	@PostMapping("/guardar")
-	public String guardarPrenda(Prenda prenda, BindingResult result, RedirectAttributes attributes) {
+	public String guardarPrenda(@ModelAttribute Prenda prenda, BindingResult result, RedirectAttributes attributes) {
 		System.out.println(prenda);
 		if(result.hasErrors()) {
 			return "prendas/registroPrendas";
@@ -82,7 +94,7 @@ public class PrendasController {
 		prenda.setFechaCreacion(new Date());
 		prendaService.guardar(prenda);
 		attributes.addFlashAttribute("clase", "success").addFlashAttribute("mensaje", "Prenda guardada correctamente");
-		return "redirect:/inventario/listado";
+		return "redirect:/inventario/listadoPaginado";
 	}
 	
 	@GetMapping("/detalle/{id}")
@@ -121,7 +133,7 @@ public class PrendasController {
 				att.addFlashAttribute("mensaje", "Prenda Actualizada correctamente").addFlashAttribute("clase", "success");
 			}
 			
-			return "redirect:/inventario/listado";
+			return "redirect:/inventario/listadoPaginado";
 		} catch (Exception e) {
 			att.addFlashAttribute("mensaje", "Ocurrió un error al actualizar la prenda... Contacte a su administrador").addFlashAttribute("clase", "danger");
 			return "prendas/editar";
@@ -129,7 +141,7 @@ public class PrendasController {
 	}
 	
 	@GetMapping("/export/excel/inventario")
-    public void exportToExcel(HttpServletResponse response) throws IOException {
+    public void exportToExcel(HttpServletResponse response, Pageable page) throws IOException {
         response.setContentType("application/octet-stream");
         DateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy_HH:mm:ss");
         String currentDateTime = dateFormatter.format(new Date());         
@@ -137,9 +149,10 @@ public class PrendasController {
         String headerValue = "attachment; filename=Inventario_" + currentDateTime + ".xlsx";
         response.setHeader(headerKey, headerValue);
          
-        List<Prenda> prendas = prendaService.listarTodas();
+        Page<Prenda> prendas = prendaService.buscarTodas(page);
          
-        ExcelExporterInventario excelExporter = new ExcelExporterInventario(prendas);
+        @SuppressWarnings("unchecked")
+		ExcelExporterInventario excelExporter = new ExcelExporterInventario(prendas);
          
         excelExporter.export(response);    
     }
@@ -152,10 +165,15 @@ public class PrendasController {
 		} catch (Exception e) {
 			att.addFlashAttribute("mensaje", "Error al eliminar la prenda... Contacte a su administrador").addFlashAttribute("clase", "danger");
 		}
-		return "redirect:/inventario/listado";
+		return "redirect:/inventario/listadoPaginado";
 	}
 	@ModelAttribute
 	public void setGenericos(Model model) {
 		model.addAttribute("categorias", categoriaService.buscarTodas());
+	}
+	
+	@InitBinder
+	public void initBinder(WebDataBinder dataBinder) {
+		dataBinder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
 	}
 }

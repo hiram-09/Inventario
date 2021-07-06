@@ -1,0 +1,64 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="favicon.ico">
+
+    <title>Tienda | Inventario de prendas</title>
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link th:href="@{/bootstrap/css/jumbotron.css}" rel="stylesheet">
+    <link th:href="@{/styles/inventarioPrendas.css}" rel="stylesheet">
+    <link th:href="@{/bootstrap/css/sticky-footer-navbar.css}" rel="stylesheet">
+
+  </head>
+
+  <body class="principal">
+
+    <header th:insert="fragments/menu :: menu-principal"></header>
+
+    <main role="main">     
+      <hr>
+      <div class="container login div-encabezado"> 
+		<h4 class="card-header div-encabezado">Ingresar</h4>
+                  
+        <div class="card-body div-interno">
+            <form th:action="@{/login}" method="post" class="form-signin">
+              <div class="row">
+                <div class="col-md-4"> 
+                </div>  
+                <div class="col-md-4"> 
+                  <img class="mb-4 rounded mx-auto d-block" th:src="@{/images/lock.png}" alt="" width="128" height="128">
+                  
+                  <div th:if="${param.error}">
+			      	<span class="text-danger">Usuario / Password incorrectos!</span>
+			      </div>
+			      
+			      <div th:if="${msg != null}" class='alert alert-success' th:text="${msg}" role='alert'></div>
+                  
+                  <label for="username" class="sr-only">Username</label>
+                  <input type="text" name="username" id="username" class="form-control" placeholder="Usuario" required autofocus><br>
+                  <label for="password" class="sr-only">Password</label>
+                  <input type="password" name="password" id="password" class="form-control" placeholder="Contraseña" required><br>
+                  <button class="btn btn-lg btn-primary btn-block" type="submit">Entrar</button>
+                </div>
+                <div class="col-md-4"> 
+                </div>
+              </div>   
+            </form>
+          </div>
+      </div> <!-- /container -->
+
+    </main>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>     
+  </body>
+</html>

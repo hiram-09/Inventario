@@ -1,11 +1,13 @@
 package com.inventario.gina.service;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.inventario.gina.model.Apartados;
+import com.inventario.gina.model.ApartadosAbonos;
 import com.inventario.gina.model.Prenda;
 import com.inventario.gina.repository.ApartadosRepository;
 
@@ -37,17 +39,37 @@ public class ApartadosServiceImpl implements IApartadosService {
 
 	@Override
 	public List<Apartados> buscarPorPrenda(Prenda prenda) {
-		return apartadosRepo.findByPrendaOrderByIdDesc(prenda);
+		return null;//apartadosRepo.findByPrendaOrderByIdDesc(prenda); 
 	}
 
 	@Override
 	public List<Apartados> buscarPorNombre(String nombre) {
-		return apartadosRepo.findByNombreContainsOrderByIdDesc(nombre);
+		return null;//apartadosRepo.findByNombreContainsOrderByIdDesc(nombre);
 	}
 
 	@Override
 	public List<Apartados> buscarTodosDesc() {
 		return apartadosRepo.findAllByOrderByIdDesc();
+	}
+
+	@Override
+	public List<Apartados> buscarPorFechaLiquidado(Date desde, Date hasta) {
+		return apartadosRepo.findByFechaLiquidadoBetween(desde, hasta);
+	}
+
+	@Override
+	public List<Apartados> buscarPorFechaLiquidado(Date fecha) {
+		return apartadosRepo.findByFechaLiquidado(fecha);
+	}
+
+	@Override
+	public List<ApartadosAbonos> buscarPorFechaAbono(Date fecha) {
+		return apartadosRepo.getByFechaAbono(fecha);
+	}
+
+	@Override
+	public List<ApartadosAbonos> buscarPorFechaAbono(Date desde, Date hasta) {
+		return apartadosRepo.getByFechasAbono(desde, hasta);
 	}
 
 }

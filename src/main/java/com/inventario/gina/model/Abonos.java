@@ -21,21 +21,26 @@ public class Abonos {
 	
 	@ManyToOne
 	@JoinColumn(name = "idApartado")
-	private Apartados apartados;
+	private Apartados apartado;
 	
-	public Abonos(Double importe, Apartados apartados) {
+	public Abonos(Double importe, Apartados apartado) {
 		super();
 		this.fecha = new Date();
 		this.importe = importe;
-		this.apartados = apartados;
+		this.apartado = apartado;
 	}
-	
-	public Apartados getApartados() {
-		return apartados;
+	public Abonos(Double importe, Apartados apartado, Date fecha) {
+		super();
+		this.fecha = fecha;
+		this.importe = importe;
+		this.apartado = apartado;
+	}
+	public Apartados getApartado() {
+		return apartado;
 	}
 
-	public void setApartados(Apartados apartados) {
-		this.apartados = apartados;
+	public void setApartado(Apartados apartado) {
+		this.apartado = apartado;
 	}
 
 	public Abonos() {

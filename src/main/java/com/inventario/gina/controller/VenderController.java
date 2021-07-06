@@ -6,6 +6,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,13 +46,14 @@ public class VenderController {
 	public String indexVender(Model model, HttpServletRequest request) {
 		List<PrendaParaVender> carrito = getCarrito(request);
 		Double total = 0.0;
-		for(PrendaParaVender prenda : carrito)
+		for(PrendaParaVender prenda : carrito) {
 			total += prenda.getPrecioVenta();
+		}
 		
 		model.addAttribute("numPrendas", carrito.size());
 		model.addAttribute("total", total);
 		model.addAttribute("prenda", new Prenda());
-		return "/ventas/vender";
+		return "ventas/vender";
 	}
 	
 	@PostMapping("/agregar")
@@ -78,7 +80,7 @@ public class VenderController {
 			}
 		}
 		carrito.add(new PrendaParaVender(prendaBuscadaPorCodigo.getId(), prendaBuscadaPorCodigo.getCodigo(), prendaBuscadaPorCodigo.getMarca(), prendaBuscadaPorCodigo.getTalla(), 
-				prendaBuscadaPorCodigo.getModelo(), prendaBuscadaPorCodigo.getPrecioVenta(), prendaBuscadaPorCodigo.getCategoria()));
+				prendaBuscadaPorCodigo.getModelo(), prendaBuscadaPorCodigo.getPrecioVenta(), prendaBuscadaPorCodigo.getCategoria(), prendaBuscadaPorCodigo.getEstatus()));
 
 		this.addCarrito(carrito, request);
 		return "redirect:/vender/";
@@ -103,15 +105,15 @@ public class VenderController {
 	}
 	
 	@PostMapping("/terminar")
-	public String terminarVenta(HttpServletRequest request, RedirectAttributes att) {
+	public String terminarVenta(HttpServletRequest request, RedirectAttributes att, Authentication auth) {
 		ArrayList<PrendaParaVender> carrito = this.getCarrito(request);
 		boolean ventaRealizada = false;
+		Venta venta = ventaService.guardar(new Venta());
 		for(PrendaParaVender prendaCarrito : carrito) {
 			Prenda prenda = prendaService.buscarPorCodigo(prendaCarrito.getCodigo());
 			
 			if(prenda == null || prenda.getEstatus().equals("Vendida") || prenda.getEstatus().equals("Apartada")) continue;
-			Usuario usuario = usuarioService.buscarPorId(1);
-			Venta venta = ventaService.guardar(new Venta());
+			Usuario usuario = usuarioService.buscarPorUsername(auth.getName());
 			prenda.setEstatus("Vendida");
 			prendaService.guardar(prenda);
 			prendaVendidaService.guardar(new PrendaVendida(prendaCarrito.getPrecioVenta(), prenda, venta, usuario));

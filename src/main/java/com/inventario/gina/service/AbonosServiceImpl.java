@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.inventario.gina.model.Abonos;
+import com.inventario.gina.model.Apartados;
 import com.inventario.gina.repository.AbonosRepository;
 
 @Service
@@ -24,4 +25,8 @@ public class AbonosServiceImpl implements IAbonosService {
 		return abonosRepo.save(abono);
 	}
 
+	@Override
+	public List<Abonos> buscarPorApartado(Apartados apartado) {
+		return abonosRepo.findByApartado(apartado);
+	}
 }

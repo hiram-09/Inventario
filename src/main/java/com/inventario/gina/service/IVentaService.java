@@ -6,6 +6,10 @@ import java.util.List;
 import com.inventario.gina.model.Venta;
 
 public interface IVentaService {
+	
 	List<Venta> buscarPorFecha(Date fecha);
+	
 	Venta guardar(Venta venta);
+	
+	void actualizaFechaVenta(Venta venta);
 }

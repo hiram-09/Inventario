@@ -7,117 +7,175 @@
     <meta name="author" content="">
     <link rel="icon" href="favicon.ico">
 
-    <title>Tienda | Formulario de Registro de apartados</title>
+    <title>Tienda | Apartados</title>
     <!-- Bootstrap core CSS -->
     <link th:href="@{/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
     <!-- Custom styles for this template -->
     <link th:href="@{/bootstrap/css/jumbotron.css}" rel="stylesheet">
     <link th:href="@{/styles/inventarioPrendas.css}" rel="stylesheet">
     <link th:href="@{/bootstrap/css/sticky-footer-navbar.css}" rel="stylesheet">
+    <link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet" >
   </head>
 
-  <body class="principal">
-
+ <body  class="principal">
+    
     <header th:insert="fragments/menu :: menu-principal"></header>
-
-    <main role="main">
-      <hr>
-      <div class="container"> 
-
-        <div class="row">
-          <div class="col-md-3 col-sm-8">            
-          	<div class="container div-encabezado">
-          		<h4 class="card-header div-encabezado letra"><strong>Prenda Apartada</strong></h4>
-	           <div class="card-body div-interno">
-	                <h5 class="card-title"><strong>Inventario: </strong> <span th:text="${prenda.codigo}"></span></h5>
-	                <h6 class="card-title"><strong>Marca: </strong> <span th:text="${prenda.marca}"></span></h6>                
-	                <h6 class="card-title"><strong>Modelo: </strong><span th:text="${prenda.modelo}"></span></h6>
-	                <h6 class="card-title"><strong>Talla: </strong><span th:text="${prenda.talla}"></span></h6>
-	                <h6 class="card-title"><strong>Categoría: </strong><span th:text="${prenda.talla}"></span></h6>
-	                <h6 class="card-title"><strong>Precio: </strong><span th:text="'$' + ${#numbers.formatDecimal(prenda.precioVenta, 0, 'COMMA', 2, 'POINT')}"></span></h6>
-					<h6 class="card-title"><strong>Características: </strong><span th:text="${prenda.caracteristicas}"></span></h6>                            
-	              </div>
-          	</div>           
+	<main role="main" >  
+	<br>   
+       <div class="container div-encabezado">
+          <h4 class="card-header div-encabezado" ><strong>Apartar Prenda</strong></h4>    
+          <div th:classappend="'alert-' + (${clase != null} ? ${clase} : info)" th:if="${mensaje != null}"
+             th:text="${mensaje}"
+             class="alert">
+          </div>       
+          <div class="card-body div-interno">
+            <form id="inventario" name="inventario" method="post" th:action="@{/apartados/agregar}" th:object="${prenda}">              
+              <div class="row">
+                <div class="col-md-5"> 
+                  <div class="form-group">
+                    <label for="nombre">Código de barras</label>
+                    <input autofocus autocomplete="off" type="text" class="form-control input-in" th:field="*{codigo}" id="codigo" name="codigo" placeholder="Código de barras" required="required">
+                  </div>
+                </div>
+              </div>  
+            </form>
+            <form th:action="@{/vender/terminar}" method="post">  
+              <div class="row">                
+                    <div class="col-md-2" th:if="${#lists.isEmpty(session.carritoApartados)}" >
+                    	<button type="button" class="btn btn-primary" disabled>Generar Apartado</button> 
+                    </div>
+                    <div class="col-md-2" th:unless="${#lists.isEmpty(session.carritoApartados)}" >
+                    	<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalNuevoApartado" >Generar Apartado</button> 
+                    </div>
+                    <div class="col-md-1" ><a class="btn btn-danger" onclick="return(confirm('Estás seguro de cancelar la venta?'))" th:href="@{/apartados/cancelar}">Cancelar</a></div>                  
+              </div>  
+            </form>  
+              <div class="row">
+                <div class="col-md-5"> 
+                  <div class="form-group">
+                  	<h5 id="numPrendas">Número de prendas apartadas: <strong th:text="${numPrendas}"></strong></h5>
+                    <h1 id="total">Total: $<strong th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 2, 'POINT')}"></strong></h1>
+                  </div>
+                </div>
+              </div> 
+              <hr>
+              <div class="card-body">
+                <table class="table table-hover">
+                    <thead class="table-head">
+                        <tr>
+                        <th scope="col">Inventario</th>
+                        <th scope="col">Marca</th>
+                        <th scope="col">Modelo</th>
+                        <th scope="col">Talla</th>
+                        <th scope="col">Categoría</th>
+                        <th scope="col">Precio</th>
+                        <th scope="col">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="prenda, it : ${session.carritoApartados}">
+	                        <th scope="row" th:text="${prenda.codigo}"></th>
+	                        <td th:text="${prenda.marca}"></td>
+	                        <td th:text="${prenda.modelo}"></td>
+	                        <td th:text="${prenda.talla}"></td>
+	                        <td th:text="${prenda.categoria.nombre}"></td>
+	                        <td th:text="'$'+${#numbers.formatDecimal(prenda.precioVenta, 0, 'COMMA', 2, 'POINT')}"></td>
+	                        <td>
+	                            <form th:action="@{/apartados/quitar/} + ${it.index}" method="post">
+		                            <button type="submit" class="btn btn-danger">Eliminar</button>
+		                        </form>
+	                        </td>
+                        </tr>         
+                    </tbody>
+                </table>
+              </div> 
           </div>
-          <div class="col-md-9">
-            <div class="container div-encabezado"> 
-				<h4 class="card-header div-encabezado letra"><strong>Crear Apartado</strong></h4>   
-		        <div class="card div-interno">          
-		          <div class="alert alert-warning" th:if="${mensaje != null}" th:text="${mensaje}" role="alert"></div>                    
-		          <div class="card-body letra">
-		            <form name="inventario" id="inventario" th:object="${apartados}" method="post" th:action="@{/apartados/guardar}"> 
-		              <input type="hidden" name="codigo" id="codigo" th:field="${prenda.codigo}">  
-		               <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger" role="alert">
-		              		Favor de corregir los siguientes errores:
-		              		<ul>
-		              			<li th:each="err : ${#fields.errors('*')} " th:text="${err}" />
-		              		</ul>
-		              </div>
-		                       
-		              <div class="row">
-		                <div class="col-md-4"> 
-		                  <div class="form-group">
-		                    <label for="nombre">Nombre</label>
-		                    <input type="text" maxlength="100" class="form-control input-in" th:field="*{nombre}" id="nombre" name="nombre" placeholder="Escriba el nombre del cliente" required="required">
-		                  </div>
-		                </div>
-		                <div class="col-md-4"> 
-		                  <div class="form-group">
-		                    <label for="telefono">Teléfono</label>
-		                    <input type="text" maxlength="10" class="form-control input-in" th:field="*{telefono}" id="telefono" name="telefono" placeholder="Escriba el teléfono del cliente" required="required">
-		                  </div>
-		                </div>
-		                <div class="col-md-4"> 
-		                  <div class="">
-		                    <label for="abono">Abono Inicial</label>
-		                    <input type="text" class="form-control input-in" id="abono" name="abono" placeholder="Escriba el abono inicial" required="required">
-		                  </div>
-		                </div> 
-		                <div class="col-lg-3 ">
-		                    <button type="submit" title="Crear Apartado" class="btn btn-primary">Guardar</button>
-		                  </div> 
-		             </div>
-		           </form>
-		          </div>
-         		</div>
-         	</div>
-         </div>
-        </div>
-
-      </div>
+      </div> <!-- /container -->
+	  <!-- Modal -->
+	  <div class="modal fade" id="modalNuevoApartado" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		  <div class="modal-dialog" role="document">
+		    <div class="modal-content  div-encabezado">
+		      <div class="modal-header">
+		        <h4 class="modal-title div-encabezado" id="exampleModalLabel">Nuevo apartado</h4>
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          <span aria-hidden="true">&times;</span>
+		        </button>
+		      </div>
+		      <form id="apartado" th:action="@{/apartados/terminar}" method="post">
+			      <div class="modal-body div-interno-modal">
+			        <div class="form-group">
+			          <label for="recipient-name" class="col-form-label">Nombre del cliente:</label>
+			          <input autofocus autocomplete="off"  type="text" name="nombreCliente" id="nombreCliente" class="form-control" placeholder="Nombre del cliente" required="required">
+			        </div>
+			        <div class="form-group">
+			          <label for="recipient-name" class="col-form-label">Teléfono del cliente:</label>
+			          <input autofocus autocomplete="off" maxlength="10" type="text" id="telefonoCliente" name="telefonoCliente" placeholder="Teléfono del cliente" class="form-control">
+			        </div>
+			        <div class="form-group">
+			            <label for="recipient-name" class="col-form-label">Fecha:</label>
+			            <input type="text" autocomplete="off" class="form-control" id="fechaApartado" name="fechaApartado" placeholder="Fecha de apartado" required="required">
+			          </div>
+			        <div class="form-group">
+			            <label for="recipient-name" class="col-form-label">Abono Inicial:</label>
+			            <input type="text" autocomplete="off" class="form-control" id="abono" name="abono" placeholder="Abono Inicial" required="required">
+			          </div>		
+			      </div>
+			      <div class="modal-footer">
+			        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+			        <button type="submit" class="btn btn-primary">Generar Apartado</button>
+			      </div>
+			  </form>
+		    </div>
+		  </div>
+	  </div>
+	  <!-- /Modal -->
     </main>
+
+
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script> 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> 
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>    
     <script>
- 	    /**Convertir las cadenas en mayúsculas */
-	    $(document).ready(function() {
-	    	$("input").on("keypress", function() {
-	    		$input = $(this);
-	    		setTimeout(function() {
-	    			$input.val($input.val().toUpperCase());
-	    		}, 50);
-	    	});
-	    })
-		inventario = document.querySelector('#inventario');	    
-	    /**Permite sólo números */
-	    inventario.abono.addEventListener('keypress', function(e) {
-	    	if (!soloNumeros(event)) {
-	    		e.preventDefault();
-	    	}
-	    });
-	    inventario.telefono.addEventListener('keypress', function(e) {
-	    	if (!soloNumeros(event)) {
-	    		e.preventDefault();
-	    	}
-	    });
-	 	//Solo permite introducir numeros.
-	    function soloNumeros(e) {
-	    	var key = e.charCode;
-	    	//console.log(key);
-	    	return (key >= 48 && key <= 57) || key == 46;
-	    }
-     </script>      
+    	var form = document.querySelector('#apartado');
+    	
+    	$('#modalNuevoApartado').on('show.bs.modal', function (event) {
+    		$("#nombreCliente").val("");
+    		$("#telefonoCliente").val("");
+    		$("#fechaApartado").val("");
+    		$("#abono").val("");
+      	})
+      	
+    	$(document).ready(function() {
+    		$("input").on("keypress", function() {
+    			$input = $(this);
+    			setTimeout(function() {
+    				$input.val($input.val().toUpperCase());
+    			}, 50);
+    		});
+    	})
+    	
+    	form.telefonoCliente.addEventListener('keypress', function(e) {
+    		if (!soloNumeros(event)) {
+    			e.preventDefault();
+    		}
+    	});
+    	form.abono.addEventListener('keypress', function(e) {
+    		if (!soloNumeros(event)) {
+    			e.preventDefault();
+    		}
+    	});
+    	//Solo permite introducir numeros.
+    	function soloNumeros(e) {
+    		var key = e.charCode;
+    		//console.log(key);
+    		return (key >= 48 && key <= 57) || key == 46;
+    	}
+    	
+    	$("#fechaApartado").datepicker({dateFormat: 'dd-mm-yy'});
+    	
+    </script>
   </body>
 </html>

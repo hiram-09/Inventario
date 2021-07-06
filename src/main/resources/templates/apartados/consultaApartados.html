@@ -15,6 +15,7 @@
     <link th:href="@{/bootstrap/css/sticky-footer-navbar.css}" rel="stylesheet">
     <link th:href="@{/styles/inventarioPrendas.css}" rel="stylesheet">
     <link href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" rel="stylesheet">
+    <link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet" >
   </head>
 
   <body  class="principal">
@@ -29,8 +30,8 @@
              class="alert">
           </div>          
           <div class="card-body div-interno">
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalNuevoApartado" >Nuevo Apartado</button> 
-            <!-- <a class="btn btn-primary" th:href="@{/inventario/export/excel/inventario}" role="button"><i class="fas fa-file" aria-hidden="true"></i> Excel</a>-->
+            <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalNuevoApartado" >Nuevo Apartado</button> --> 
+            <a class="btn btn-primary" th:href="@{/apartados/crear}" role="button"><i class="fas fa-file" aria-hidden="true"></i> Nuevo Apartado</a>
             <hr>       
             <form th:action="@{/apartados/buscar}" th:method="get">    
 	            <div class="row">
@@ -48,78 +49,191 @@
             <hr>
             <div class="row">
                 <div class="col-md-3"> 
-                    <label>Total de prendas: <strong th:text="${totalPrendas}"></strong></label>
+                    <label>Total de apartados: <strong th:text="${totalPrendas}"></strong></label>
                 </div>
             </div>
             
             <table class="table table-hover">
               <thead class="table-head">
                 <tr>
-                  <th scope="col">Inventario</th>
-                  <th scope="col">Marca</th>
-                  <th scope="col">Talla</th>
-                  <th scope="col">Modelo</th>
-                  <th scope="col">Precio</th>
-                  <th scope="col">Por pagar</th>
+                  <th scope="col">Fecha Apartado</th>
+                  <th scope="col">Nombre del cliente</th>
+                  <th scope="col">Teléfono del cliente</th>
                   <th scope="col">Estatus</th>
-                  <th scope="col">Nombre</th>
                   <th scope="col">Acciones</th>
                 </tr>
               </thead>
               <tbody>
-                <tr th:each="apartado: ${apartados}" th:title="${apartado.prenda.caracteristicas}">
-                  <th scope="row" th:text="${apartado.prenda.codigo}"></th>
-                  <td th:text="${apartado.prenda.marca}"></td>
-                  <td th:text="${apartado.prenda.talla}"></td>
-                  <td th:text="${apartado.prenda.modelo}"></td>
-                  <td th:text="'$' + ${#numbers.formatDecimal(apartado.precio, 0, 'COMMA', 2, 'POINT')}"></td>
-                  <td th:text="${apartado.estatus == 'Liquidada' ? '$0.00' : '$' + #numbers.formatDecimal(apartado.restante, 0, 'COMMA', 2, 'POINT')}"></td>
-                  <td th:text="${apartado.estatus}"></td>
-                  <td th:text="${apartado.nombre}"></td>
+                <tr th:each="apartado: ${apartados}" >
+                  <th th:text="${#dates.format(apartado.fechaApartado, 'dd-MM-yyyy')}"></th>
+                  <td th:text="${apartado.nombreCliente}"></td>
+                  <td th:text="${apartado.telefonoCliente}"></td>
                   <td>
+                  	<h5><span th:if="${apartado.estatus == 'Apartada'}" class="badge badge-primary" th:text="${apartado.estatus}" ></span></h5>
+                  	<h5><span th:if="${apartado.estatus == 'Liquidada'}" class="badge badge-success" th:text="${apartado.estatus}" ></span></h5>
+                  	<h5><span th:if="${apartado.estatus == 'Cancelada'}" class="badge badge-danger" th:text="${apartado.estatus}" ></span></h5>
+                  </td>
+                  <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#prendasModal" 
+                  			  th:data-id="${apartado.id}"
+                  			  th:data-nombre="${apartado.nombreCliente}" >Detalle</button></td>
+                  
+                  <!-- <td>
                     <a th:if="${apartado.estatus == 'Apartada'}" th:href="@{/apartados/abonar/{id} (id=${apartado.id})}" class="btn btn-success btn-sm" role="button" title="Abonar"><i class="fas fa-donate" aria-hidden="true"></i></a>
                     <a th:unless="${apartado.estatus == 'Apartada'}" class="btn btn-secondary disabled btn-sm" disabled><i class="fas fa-donate"></i></a>
                     <a th:href="@{/apartados/detalle/{id} (id=${apartado.id})}" class="btn btn-success btn-sm" role="button" title="Detalle"><i class="fas fa-file-alt" aria-hidden="true"></i></a>
                     <a th:if="${apartado.estatus == 'Apartada'}" th:href="@{/apartados/cancelar/{id} (id=${apartado.id})}" onclick="return confirm('¿Estas seguro?')" class="btn btn-success btn-sm" role="button" title="Cancelar Apartado"><i class="fas fa-ban" aria-hidden="true"></i></a>
                     <a th:unless="${apartado.estatus == 'Apartada'}" class="btn btn-secondary disabled btn-sm" ><i class="fas fa-ban" aria-hidden="true"></i></a>
-                  </td>
+                  </td> -->
                 </tr>           
               </tbody>
             </table>
           </div>
       </div> <!-- /container -->
+	  
+	  
 	  <!-- Modal -->
-	  <div class="modal fade" id="modalNuevoApartado" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		  <div class="modal-dialog" role="document">
-		    <div class="modal-content">
+	  <div class="modal fade" id="prendasModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+		    <div class="modal-content  div-encabezado">
 		      <div class="modal-header">
-		        <h5 class="modal-title" id="exampleModalLabel">Nuevo apartado</h5>
+		        <h4 class="modal-title div-encabezado" id="exampleModalLabel"></h4>
 		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
 		          <span aria-hidden="true">&times;</span>
 		        </button>
 		      </div>
-		      <form th:action="@{/apartados/crear}" method="post">
-			      <div class="modal-body">
-			        <div class="form-group">
-			          <label for="recipient-name" class="col-form-label">Inventario:</label>
-			          <input autofocus autocomplete="off"  type="text" name="codigo" class="form-control" id="recipient-name">
-			        </div>
-			      </div>
-			      <div class="modal-footer">
-			        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-			        <button type="submit" class="btn btn-primary">Buscar</button>
-			      </div>
-			  </form>
+		      <div class="modal-body div-interno-modal">
+		          <div class="form-group">
+		          
+			          <div th:fragment="resultsList" th:unless="${#lists.isEmpty(prendasApartadas)}">
+			          	<label th:if="${apartado.estatus == 'Apartada'}" >IMPORTE TOTAL:<span th:text="'$' + ${#numbers.formatDecimal(importeTotal, 0, 'COMMA', 2, 'POINT')}"></span></label><br>
+			          	<label th:if="${apartado.estatus == 'Apartada'}">RESTA:<span th:text="'$' + ${#numbers.formatDecimal(restante, 0, 'COMMA', 2, 'POINT')}"></span></label>
+			          	<label th:if="${apartado.estatus == 'Cancelada'}" >EL APARTADO SE CANCELÓ EL DÍA: <span th:text="${#dates.format(apartado.fechaCancelado, 'dd/MM/yyyy')}"></span></label>
+			          	<label th:if="${apartado.estatus == 'Liquidada'}" >EL APARTADO SE LIQUIDÓ EL DÍA: <span th:text="${#dates.format(apartado.fechaLiquidado, 'dd/MM/yyyy')}"></span></label>
+			          	<hr>
+			            <table class="table table-hover table-striped mb-0">
+			            	<thead class="table-head">
+				            	<tr>
+				            		<th>Inventario</th>
+				            		<th>Categoría</th>
+				            		<th>Precio</th>
+				            	</tr>
+				            </thead>
+				            <tbody>
+				            	<tr th:each="prenda : ${prendasApartadas}">
+				            		<td th:text="${prenda.prenda.codigo}"></td>
+				            		<td th:text="${prenda.prenda.categoria.nombre}"></td>
+				            		<td th:text="'$' + ${#numbers.formatDecimal(prenda.prenda.precioVenta, 0, 'COMMA', 2, 'POINT')}"></td>
+				            	</tr>
+				            </tbody>
+			            </table>
+			            <form id="formAbono" th:action="@{/apartados/abonar/{id} (id = ${idApartado})}" method="post" onsubmit="return abonar()">
+			            	<label class="col-form-label">Abonos:</label>
+			            	<div class="row" th:if="${apartado.estatus == 'Apartada'}">
+			            		<input type="hidden" name="idApartado" id="idApartado" th:value="${idApartado}" />
+			            		<input type="hidden" name="hdRestante" id="hdRestante" th:value="${restante}" />
+			            		<div class="col-md-4"><input placeholder="Importe" type="text" id="txtAbono" name="txtAbono" class="form-control" required="required"></div>
+			            		<div class="col-md-4"><input type="text" autocomplete="off" class="form-control" id="fecha" name="fecha" placeholder="Fecha" required="required"></div>
+			            		<script>
+			            		$(function () {
+			                 		 $("#fecha").datepicker({dateFormat: 'dd-mm-yy'});
+			                 	 });
+			            		</script>
+			            		<div class="col-md-2"><input type="submit" class="btn btn-primary" id="btnAbonar" value="Abonar"></div>		            															               
+		            		</div>
+			            </form>
+			            
+		            	<hr>
+		           		<div class="form-group">
+				          <table class="table table-hover table-striped mb-0">
+				            	<thead class="table-head">
+					            	<tr>
+					            		<th>Fecha</th>
+					            		<th>Importe</th>
+					            	</tr>
+					            </thead>
+					            <tbody>
+					            	<tr th:each="abono : ${abonos}">
+					            		<td th:text="${#dates.format(abono.fecha, 'dd-MM-yyyy')}"></td>
+					            		<td th:text="'$' + ${#numbers.formatDecimal(abono.importe, 0, 'COMMA', 2, 'POINT')}"></td>
+					            	</tr>
+					            </tbody>
+				            </table>
+		         	 	</div>
+		          		<div id="resultAbonos"></div>
+		          		  <div class="modal-footer">
+					        <a th:if="${apartado.estatus == 'Apartada'}" th:href="@{/apartados/eliminar/{id} (id=${idApartado})}" onclick="return confirm('¿Estas seguro?')" class="btn btn-danger" role="button" title="Cancelar Apartado">Cancelar Apartado</a>
+					        <form th:action="@{/apartados/liquidar}" method="post" onsubmit="return liquidar()">
+					        	<input type="hidden" name="idApartadoL" id="idApartadoL">
+					        	<input type="hidden" name="restanteL" id="restanteL">
+					        	<input type="hidden" name="fechaL" id="fechaL">
+					        	<input type="submit" th:if="${apartado.estatus == 'Apartada'}" class="btn btn-success" value="Liquidar">
+					        </form>
+					        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+					      </div>
+			          </div>
+		          	<div id="resultPrendas"></div>
+		          </div>		          
+		      </div>		      
 		    </div>
 		  </div>
-	  </div>
+		</div>
 	  <!-- /Modal -->
+	  
+	  
     </main>
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> 
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>  
-    <script th:src="@{/js/util.js}"></script>     
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script th:src="@{/js/util.js}"></script>  
+      
+    <script type="text/javascript">    	
+    	$('#prendasModal').on('show.bs.modal', function (event) {
+    	  var button = $(event.relatedTarget);
+    	  var idApartado = button.data('id');
+    	  var nombreCliente = button.data('nombre');
+    	  var modal = $(this)
+    	  modal.find('.modal-title').text('Apartado de: ' + nombreCliente);
+    	  consultaPrendas(idApartado);
+    	  //consultaAbonos(idApartado);
+    	})
+    	
+    	function consultaPrendas(idApartado){
+    		var url = "/apartados/consultaPrendas/"+idApartado;
+    		$("#resultPrendas").load(url);
+    	}
+    	function abonar(){
+    		
+  			var importe = parseFloat($("#txtAbono").val());
+      		var restante = parseFloat($("#hdRestante").val());
+      		if(importe > restante){
+      			alert("El importe excede a lo que resta");
+      			return false;
+      		}else if(importe == restante){
+      			alert("El importe ingresado es igual al restante del apartado.\nFavor de presionar el botón liquidar.");
+      			
+      			liquidar();
+      			return false;
+      		}else{
+      			return true;
+      		}
+    		
+    		
+    	}
+    	function liquidar(){
+    		$("#restanteL").val(parseFloat($("#hdRestante").val()));
+    		$("#idApartadoL").val($("#idApartado").val());
+    		var fecha = $("#fecha").val();
+    		if(fecha == "" ){
+    			fecha = new Date();
+    			fecha = fecha.getDate()+"-"+(fecha.getMonth()+1)+"-"+fecha.getFullYear();
+    		}
+    		$("#fechaL").val(fecha);
+    		return true;
+    	}
+    </script>     
   </body>
 </html>

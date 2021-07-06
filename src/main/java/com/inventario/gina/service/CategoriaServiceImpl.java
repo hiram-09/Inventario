@@ -19,4 +19,19 @@ public class CategoriaServiceImpl implements ICategoriaService {
 		return (List<Categorias>) categoriaRepository.findAll();
 	}
 
+	@Override
+	public void guardar(Categorias categoria) {
+		categoriaRepository.save(categoria);		
+	}
+
+	@Override
+	public void eliminar(Integer id) {
+		categoriaRepository.deleteById(id);
+	}
+
+	@Override
+	public Categorias buscarPorId(Integer id) {
+		return categoriaRepository.findById(id).orElse(null);
+	}
+
 }

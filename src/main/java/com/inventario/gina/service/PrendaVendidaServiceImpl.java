@@ -25,7 +25,16 @@ public class PrendaVendidaServiceImpl implements IPrendaVendidaService {
 	}
 	@Override
 	public List<PrendaVendida> buscarPorFechas(Date desde, Date hasta) {
-		return prendaVendidaRepo.findByVentaFechaBetween(desde, hasta);
+		return prendaVendidaRepo.findByVentaFechaBetweenOrderByVentaFechaDesc(desde, hasta);
+	}
+	@Override
+	public PrendaVendida buscarPorCodigo(String codigo) {
+		System.out.println("Se busca por codigo");
+		return prendaVendidaRepo.getByCodigo(codigo);
+	}
+	@Override
+	public PrendaVendida buscarPorId(Integer id) {
+		return prendaVendidaRepo.findById(id).orElse(null);
 	}
 
 }

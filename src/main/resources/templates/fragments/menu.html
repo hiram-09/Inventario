@@ -1,5 +1,5 @@
 <nav th:fragment="menu-principal" class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-	<a class="navbar-brand" href="#">Novedades Ana</a>
+	<a class="navbar-brand" th:href="@{/}">Novedades Ana</a>
 	<button class="navbar-toggler" type="button" data-toggle="collapse"
 		data-target="#navbarsExampleDefault"
 		aria-controls="navbarsExampleDefault" aria-expanded="false"
@@ -9,21 +9,31 @@
 
 	<div class="collapse navbar-collapse" id="navbarsExampleDefault">
 		<ul class="navbar-nav mr-auto">
-			<li class="nav-item"><a class="nav-link"
-				th:href="@{/inventario/listado}">Productos</a>
+			<li class="nav-item" sec:authorize="hasAnyAuthority('ADMINISTRADOR')">
+				<a class="nav-link"	th:href="@{/inventario/listadoPaginado}">Productos</a>
 			</li>
-			<li class="nav-item"><a class="nav-link"
-				th:href="@{/ventas/historial}">Historial de ventas</a></li>
-			<li class="nav-item"><a class="nav-link"
-				th:href="@{/vender/}">Vender</a>
-			</li>
-			<li class="nav-item"><a class="nav-link"
+			<li class="nav-item" sec:authorize="hasAnyAuthority('ADMINISTRADOR', 'VENDEDOR')">
+				<a class="nav-link"	th:href="@{/ventas/historial}">Historial de ventas</a></li>
+			<li class="nav-item" sec:authorize="hasAnyAuthority('ADMINISTRADOR', 'VENDEDOR')"><a class="nav-link"
 				th:href="@{/ventas/dia}">Ventas	del d&iacute;a</a>
 			</li>
-			<li class="nav-item"><a class="nav-link"
+			<li class="nav-item" sec:authorize="hasAnyAuthority('ADMINISTRADOR', 'VENDEDOR')"><a class="nav-link"
 				th:href="@{/apartados/consulta}">Apartados</a>
 			</li>
+			<li class="nav-item" sec:authorize="hasAnyAuthority('ADMINISTRADOR', 'VENDEDOR')"><a class="nav-link"
+				th:href="@{/cambios/}">Cambios</a>
+			</li>
+			<li class="nav-item" sec:authorize="hasAnyAuthority('ADMINISTRADOR', 'VENDEDOR')">
+				<a class="nav-link"	th:href="@{/vender/}">VENDER</a>
+			</li>
 		</ul>
-		<a class="navbar-brand" href="#">Bienvenida Georgina</a>
+		<div sec:authorize="isAnonymous()">
+			<a class="btn btn-primary" th:href="@{/index}">Ingresar</a>&nbsp;
+		</div>
+		<div sec:authorize="isAuthenticated()">
+			<span th:if="${session.usuario != null}" class="text-light" th:text="'Bienvenido ' + ${session.usuario.nombre}"></span>&nbsp;
+			<a class="btn btn-primary" th:href="@{/logout}">Salir</a>
+		</div>
+		
 	</div>
 </nav>
