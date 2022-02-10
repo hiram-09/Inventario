@@ -16,4 +16,6 @@ public interface IPrendaVendidaService {
 	public PrendaVendida buscarPorCodigo(String codigo);
 	
 	public PrendaVendida buscarPorId(Integer id); 
+	
+	public void eliminaPrendaVendida(PrendaVendida prendaVendida);
 }

@@ -3,7 +3,8 @@ package com.inventario.gina.util;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
- 
+import java.util.stream.Collectors;
+
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
  
@@ -61,11 +62,12 @@ public class ExcelExporterHistorial{
         font.setBold(true);
         font.setFontHeight(16);
         style.setFont(font);
-        createCell(row, 0, "FECHA APARTADO", style);      
-        createCell(row, 1, "NOMBRE DEL CLIENTE", style);       
-        createCell(row, 2, "FECHA ABONO", style); 
-        createCell(row, 3, "IMPORTE", style); 
-         
+        createCell(row, 0, "NOMBRE DEL CLIENTE", style);       
+        createCell(row, 1, "PRENDAS", style);       
+        createCell(row, 2, "IMPORTE", style); 
+        createCell(row, 3, "FECHA APARTADO", style);      
+        createCell(row, 4, "FECHA ABONO", style); 
+        createCell(row, 5, "ESTATUS", style);          
     }
     
     private void createCell(Row row, int columnCount, Object value, CellStyle style) {
@@ -117,15 +119,20 @@ public class ExcelExporterHistorial{
         style.setFont(font);
         
         int columnCount; 
+        String prendas = "";
         for (ApartadosAbonos aa : apartadosAbonos) {
-        	System.out.println(aa);
-            Row row = sheet.createRow(rowCount++);
+        	prendas = aa.getPrendasApartadas().stream()
+        			 						  .map(pa -> pa.getPrenda().getCodigo().toString())
+        			                          .collect(Collectors.joining(", "));
+        	Row row = sheet.createRow(rowCount++);
             columnCount = 0;
              
-            createCell(row, columnCount++, aa.getFechaApartado(), style);
             createCell(row, columnCount++, aa.getNombreCliente(), style);
+            createCell(row, columnCount++, prendas, style);
+            createCell(row, columnCount++, aa.getImporte(), style);
+            createCell(row, columnCount++, aa.getFechaApartado(), style);
             createCell(row, columnCount++, aa.getFechaAbono(), style);
-            createCell(row, columnCount++, aa.getImporte(), style);             
+            createCell(row, columnCount++, aa.getEstatus(), style);
         }
     }
      

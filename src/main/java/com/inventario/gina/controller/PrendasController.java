@@ -41,6 +41,9 @@ public class PrendasController {
 	@Autowired
 	IPrendaService prendaService;
 	
+	@Autowired
+	static Page<Prenda> prendas;
+	
 	@GetMapping("/listado")
 	public String listarInventario(Model model) {
 		List<Prenda> prendas = prendaService.listarTodas();
@@ -50,9 +53,11 @@ public class PrendasController {
 		return "prendas/inventarioPrendas";
 	}
 	
+	@SuppressWarnings("static-access")
 	@GetMapping("/listadoPaginado")
 	public String listarInventarioPaginado(Model model, Pageable page) {
 		Page<Prenda> prendas = prendaService.buscarTodas(page);
+		this.prendas = prendas;
 		model.addAttribute("prendas", prendas);
 		model.addAttribute("totalPrendas", prendas.getTotalElements());
 		model.addAttribute("prenda", new Prenda());
@@ -64,6 +69,7 @@ public class PrendasController {
 		return "prendas/registroPrendas";
 	}
 	
+	@SuppressWarnings("static-access")
 	@GetMapping("/buscar")
 	public String buscar(Prenda prenda, Model model, Pageable page) {
 		Page<Prenda> prendas =  null;
@@ -72,6 +78,7 @@ public class PrendasController {
 		Example<Prenda> example = Example.of(prenda, matcher);
 		
 		prendas = prendaService.buscarByExample(example, page);
+		this.prendas = prendas;
 		
 		model.addAttribute("prenda", prenda);
 		model.addAttribute("prendas", prendas);
@@ -81,7 +88,6 @@ public class PrendasController {
 	
 	@PostMapping("/guardar")
 	public String guardarPrenda(@ModelAttribute Prenda prenda, BindingResult result, RedirectAttributes attributes) {
-		System.out.println(prenda);
 		if(result.hasErrors()) {
 			return "prendas/registroPrendas";
 		}
@@ -149,12 +155,27 @@ public class PrendasController {
         String headerValue = "attachment; filename=Inventario_" + currentDateTime + ".xlsx";
         response.setHeader(headerKey, headerValue);
          
-        Page<Prenda> prendas = prendaService.buscarTodas(page);
+        //Page<Prenda> prendas = prendaService.buscarTodas(page);
          
-        @SuppressWarnings("unchecked")
-		ExcelExporterInventario excelExporter = new ExcelExporterInventario(prendas);
+        ExcelExporterInventario excelExporter = new ExcelExporterInventario(prendas);
          
-        excelExporter.export(response);    
+        excelExporter.export(response);
+    }
+	@GetMapping("/export/excel/inventario_completo")
+    public void exportToExcelAll(HttpServletResponse response) throws IOException {
+        response.setContentType("application/octet-stream");
+        DateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy_HH:mm:ss");
+        String currentDateTime = dateFormatter.format(new Date());         
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=Inventario_" + currentDateTime + ".xlsx";
+        response.setHeader(headerKey, headerValue);
+         
+        List<Prenda> prendas = prendaService.listarTodas();
+         
+        ExcelExporterInventario excelExporter = new ExcelExporterInventario(prendas);
+         
+        excelExporter.exportAll(response); 
+
     }
 	
 	@GetMapping("/eliminar/{id}")
@@ -163,6 +184,7 @@ public class PrendasController {
 			prendaService.eliminar(id);
 			att.addFlashAttribute("mensaje", "Prenda eliminada correctamente").addFlashAttribute("clase", "success");
 		} catch (Exception e) {
+			System.out.println(e);
 			att.addFlashAttribute("mensaje", "Error al eliminar la prenda... Contacte a su administrador").addFlashAttribute("clase", "danger");
 		}
 		return "redirect:/inventario/listadoPaginado";

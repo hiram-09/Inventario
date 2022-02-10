@@ -34,7 +34,7 @@
                 <div class="col-md-5"> 
                   <div class="form-group">
                     <label for="nombre">Código de barras</label>
-                    <input autofocus autocomplete="off" type="text" class="form-control input-in" th:field="*{codigo}" id="codigo" name="codigo" placeholder="Código de barras" required="required">
+                    <input autofocus autocomplete="off" type="text" class="form-control input-in auto_remove_space" th:field="*{codigo}" id="codigo" name="codigo" placeholder="Código de barras" required="required">
                   </div>
                 </div>
               </div>  
@@ -100,6 +100,10 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> 
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	<script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>    
-    
+    <script>
+		$('.auto_remove_space').on('keyup',function(e) {
+ 		  $( this ).val($( this ).val().replace(/\s/g, ''));
+ 		});
+    </script>
   </body>
 </html>

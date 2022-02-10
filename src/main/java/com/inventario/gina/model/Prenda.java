@@ -15,6 +15,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name="prendas")
 public class Prenda {
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
@@ -32,10 +33,6 @@ public class Prenda {
 	@JoinColumn(name = "idCategoria")
 	private Categorias categoria;
 	
-	@OneToMany
-	@JoinColumn(name = "prenda")
-	private Set<PrendaApartada> prendaApartada;
-
 	
 	public Prenda(){}
 
@@ -141,12 +138,13 @@ public class Prenda {
 		this.fechaCreacion = fechaCreacion;
 	}
 
-	public Set<PrendaApartada> getPrendaApartada() {
-		return prendaApartada;
+	@Override
+	public String toString() {
+		return "Prenda [id=" + id + ", codigo=" + codigo + ", marca=" + marca + ", talla=" + talla + ", modelo="
+				+ modelo + ", estatus=" + estatus + ", precioCompra=" + precioCompra + ", precioVenta=" + precioVenta
+				+ ", fechaCreacion=" + fechaCreacion + ", caracteristicas=" + caracteristicas + ", categoria="
+				+ categoria + "]";
 	}
 
-	public void setPrendaApartada(Set<PrendaApartada> prendaApartada) {
-		this.prendaApartada = prendaApartada;
-	}
 	
 }

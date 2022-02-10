@@ -30,4 +30,9 @@ public class VentaServiceImpl implements IVentaService {
 		ventaRepository.save(venta);		
 	}
 
+	@Override
+	public void eliminarVenta(Venta venta) {
+		ventaRepository.delete(venta);
+	}
+
 }

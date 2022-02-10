@@ -31,31 +31,51 @@
                     
           <div class="card-body div-interno">
             <a class="btn btn-primary" th:href="@{/inventario/registro}" role="button"><i class="fas fa-file" aria-hidden="true"></i> Nuevo</a> 
-            <a class="btn btn-primary" th:href="@{/inventario/export/excel/inventario/(page=${prendas.number})}" role="button"><i class="fas fa-file" aria-hidden="true"></i> Excel</a>
+            <a class="btn btn-primary" th:href="@{/inventario/export/excel/inventario/(page=${prendas.number})}" role="button"><i class="fas fa-file" aria-hidden="true"></i> Exportar Página</a>
+            <a class="btn btn-primary" href="#" onclick="exportarTodo()" role="button"><i class="fas fa-file" aria-hidden="true"></i> Exportar Todo</a>
             <hr>       
-            <form th:action="@{/inventario/buscar}" th:method="get" th:object="${prenda}">    
+            <form id="formBuscar" th:action="@{/inventario/buscar}" th:method="get" th:object="${prenda}">    
 	            <div class="row">
 	                <div class="col-md-3"> 
-	                    <input type="text" th:field="*{codigo}" class="form-control input-in" id="codigo" name="codigo" placeholder="Búsqueda por código" >
+	                    <input type="text" th:field="*{codigo}" class="form-control input-in auto_remove_space" id="codigo" name="codigo" placeholder="Búsqueda por código" >
 	                </div>
 	                <div class="col-md-3"> 
 	                    <input type="text" th:field="*{marca}" class="form-control input-in" id="marca" name="marca" placeholder="Búsqueda por marca" >
 	                </div>
-	                <!-- <div class="col-md-3"> 
-	                    <select class="form-control" name="categoria" id="categoria">
-	                        <option value="0">--Búsqueda por categoría--</option>
+	                <div class="col-md-3"> 
+	                    <select class="form-control input-in" name="categoria" id="categoria" th:field="*{categoria}" >
+	                        <option value="0" >--Búsqueda por categoría--</option>
 	                        <option th:each="categoria : ${categorias}" th:value="${categoria.id}" th:text="${categoria.nombre}"></option>
 	                      </select>
-	                </div>-->
+	                </div>
 	                <div class="col-md-3"> 
 	                    <button type="submit" title="Buscar" class="btn btn-primary">Buscar</button>  
 	                </div>
 	            </div>
 	        </form>
             <hr>
-            <div class="row">
-                <div class="col-md-3"> 
+            <div class="nav nav-pills nav-fill">
+                <div class="nav-item"> 
                     <label>Total de prendas: <strong th:text="${totalPrendas}"></strong></label>
+                </div>
+                <div class="nav-item"> 
+                    <nav th:if="${prendas.totalPages > 0}" aria-label="Page navigation example" >
+						<ul class="pagination justify-content-center">
+							<li class="page-item" th:classappend="${prendas.number == 0 ? 'disabled' : ''}">
+								<a href="#" th:onClick="'javascript:paginado(\''+${prendas.number-1}+'\')'" class="page-link">Anterior</a>
+							</li>
+										
+							<!-- <li th:if="${totalPrendas > 30}" class="page-item" th:classappend="${i eq prendas.number + 1} ? 'active'" th:each="i : ${#numbers.sequence( 1, prendas.totalPages, 1)}">
+								<a class="page-link" th:href="@{/inventario/listadoPaginado?page={tmpPag} (tmpPag=${i-1}) }" th:text="${i}" th:title="${'Page '+ i}" data-toggle="tooltip"></a>
+							</li> -->
+							<li class="page-item" th:classappend="${prendas.number == (prendas.totalPages - 1) ? 'disabled' : ''}">
+								<a href="#" th:onClick="'javascript:paginado(\''+${prendas.number+1}+'\')'" class="page-link">Siguiente</a>
+							</li>
+						</ul>
+					</nav>
+                </div>
+                <div class="nav-item"> 
+                    <label th:text="'Página '+${prendas.number + 1}+' de '+${prendas.totalPages}"></label>
                 </div>
             </div>
             <hr>
@@ -94,26 +114,94 @@
             <nav th:if="${prendas.totalPages > 0}" aria-label="Page navigation example" >
 				<ul class="pagination justify-content-center">
 					<li class="page-item" th:classappend="${prendas.number == 0 ? 'disabled' : ''}">
-						<a th:href="@{/inventario/listadoPaginado(page=${prendas.number - 1})}" class="page-link">Anterior</a>
+						<a href="#" th:onClick="'javascript:paginado(\''+${prendas.number-1}+'\')'" class="page-link">Anterior</a>
 					</li>
 								
-					<li th:if="${totalPrendas > 30}" class="page-item" th:classappend="${i eq prendas.number + 1} ? 'active'" th:each="i : ${#numbers.sequence( 1, prendas.totalPages, 1)}">
+					<!-- <li th:if="${totalPrendas > 30}" class="page-item" th:classappend="${i eq prendas.number + 1} ? 'active'" th:each="i : ${#numbers.sequence( 1, prendas.totalPages, 1)}">
 						<a class="page-link" th:href="@{/inventario/listadoPaginado?page={tmpPag} (tmpPag=${i-1}) }" th:text="${i}" th:title="${'Page '+ i}" data-toggle="tooltip"></a>
-					</li>
+					</li> -->
 					<li class="page-item" th:classappend="${prendas.number == (prendas.totalPages - 1) ? 'disabled' : ''}">
-						<a th:href="@{/inventario/listadoPaginado(page=${prendas.number + 1})}" class="page-link">Siguiente</a>
+						<a href="#" th:onClick="'javascript:paginado(\''+${prendas.number+1}+'\')'" class="page-link">Siguiente</a>
 					</li>
 				</ul>
 			</nav>
           </div>
       </div> <!-- /container -->
-
+	  <!-- Modal -->
+		<div class="modal fade" id="mensajeEspera" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+		  <div class="modal-dialog modal-dialog-centered">
+		    <div class="modal-content">
+		      <div class="modal-body  div-interno-alert">
+		      	<h5 class="mensaje">Exportando datos a Excel...</h5>
+		        <div class="d-flex justify-content-center">
+				  <div class="spinner-border" role="status">
+				    <span class="sr-only">Loading...</span>
+				  </div>
+				</div>
+		      </div>
+		    </div>
+		  </div>
+		</div>
     </main>
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> 
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>  
-    <script th:src="@{/js/util.js}"></script>     
+    <script th:src="@{/js/util.js}"></script>   
+    <script>
+    	function paginado(page){
+    		var marca = $("#marca").val();
+    		var codigo = $("#codigo").val();
+    		var categoria = $("#categoria").val();
+    		if(marca != "" || codigo != "" || categoria != "")
+    			window.location = '/inventario/buscar?codigo='+codigo+'&marca='+marca+'&categoria='+categoria+'&page='+page;
+    		else
+    			window.location = '/inventario/listadoPaginado?page='+page;
+    	}
+    	$('.auto_remove_space').on('keyup',function(e) {
+   		  $( this ).val($( this ).val().replace(/\s/g, ''));
+   		});
+    	
+    	function exportarTodo(){
+    		if(confirm('Este proceso puede tardar varios minutos, \n¿Está seguro de continuar?')){
+    			$("#mensajeEspera").modal('show');
+    			fileName="inventaio.xlsx"
+    			const Url = "/inventario/export/excel/inventario_completo";
+    			var request = new XMLHttpRequest();
+    			request.open('GET', Url, true);
+    			request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+    			request.responseType = 'blob';
+
+    			request.onload = function(e) {
+    			    if (this.status === 200) {
+    			    	var disposition = this.getResponseHeader("Content-Disposition");
+    			    	if (disposition && disposition.indexOf('attachment') !== -1) {
+    			            var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+    			            var matches = filenameRegex.exec(disposition);
+    			            if (matches != null && matches[1]) fileName = matches[1].replace(/['"]/g, '');
+    			        }
+	   			        var blob = this.response;
+	   			        if(window.navigator.msSaveOrOpenBlob) {
+	   			            window.navigator.msSaveBlob(blob, fileName);
+	   			        }else{
+	   			            var downloadLink = window.document.createElement('a');
+	   			            var contentTypeHeader = request.getResponseHeader("Content-Type");
+	   			            downloadLink.href = window.URL.createObjectURL(new Blob([blob], { type: contentTypeHeader }));
+	   			            downloadLink.download = fileName;
+	   			            document.body.appendChild(downloadLink);
+	   			            downloadLink.click();
+	   			            document.body.removeChild(downloadLink);
+	   			       }
+   			       }
+   			   	   $("#mensajeEspera").modal('hide');
+   			   };
+   			   request.send();    			
+    		}else
+    			return;
+    			
+    	}
+    </script>  
   </body>
 </html>

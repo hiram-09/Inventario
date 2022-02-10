@@ -42,6 +42,7 @@ public class DatabaseWebSecurity extends WebSecurityConfigurerAdapter {
 					"/bcrypt/**").permitAll()
 			.antMatchers(
 					"/inventario/**").hasAnyAuthority("ADMINISTRADOR")
+			.antMatchers("/ventas/historial/**").hasAnyAuthority("ADMINISTRADOR")
 			.anyRequest().authenticated()
 			.and().formLogin().loginPage("/login").permitAll();
 	}

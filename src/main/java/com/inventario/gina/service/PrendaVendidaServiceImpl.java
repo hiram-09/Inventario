@@ -36,5 +36,9 @@ public class PrendaVendidaServiceImpl implements IPrendaVendidaService {
 	public PrendaVendida buscarPorId(Integer id) {
 		return prendaVendidaRepo.findById(id).orElse(null);
 	}
+	@Override
+	public void eliminaPrendaVendida(PrendaVendida prendaVendida) {
+		prendaVendidaRepo.delete(prendaVendida);
+	}
 
 }

@@ -7,9 +7,11 @@ import com.inventario.gina.model.Venta;
 
 public interface IVentaService {
 	
-	List<Venta> buscarPorFecha(Date fecha);
+	public List<Venta> buscarPorFecha(Date fecha);
 	
-	Venta guardar(Venta venta);
+	public Venta guardar(Venta venta);
 	
-	void actualizaFechaVenta(Venta venta);
+	public void actualizaFechaVenta(Venta venta);
+	
+	public void eliminarVenta(Venta venta);
 }

@@ -34,7 +34,7 @@
                 <div class="col-md-5"> 
                   <div class="form-group">
                     <label for="nombre">Código de barras</label>
-                    <input autofocus autocomplete="off" type="text" class="form-control input-in" th:field="*{codigo}" id="codigo" name="codigo" placeholder="Código de barras" required="required">
+                    <input autofocus autocomplete="off" type="text" class="form-control input-in auto_remove_space" th:field="*{codigo}" id="codigo" name="codigo" placeholder="Código de barras" required="required">
                   </div>
                 </div>
               </div>  
@@ -47,7 +47,7 @@
                     <div class="col-md-2" th:unless="${#lists.isEmpty(session.carritoApartados)}" >
                     	<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalNuevoApartado" >Generar Apartado</button> 
                     </div>
-                    <div class="col-md-1" ><a class="btn btn-danger" onclick="return(confirm('Estás seguro de cancelar la venta?'))" th:href="@{/apartados/cancelar}">Cancelar</a></div>                  
+                    <div class="col-md-1" ><a class="btn btn-danger" onclick="return(confirm('Estás seguro de cancelar el apartado?'))" th:href="@{/apartados/cancelar}">Cancelar</a></div>                  
               </div>  
             </form>  
               <div class="row">
@@ -55,6 +55,7 @@
                   <div class="form-group">
                   	<h5 id="numPrendas">Número de prendas apartadas: <strong th:text="${numPrendas}"></strong></h5>
                     <h1 id="total">Total: $<strong th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 2, 'POINT')}"></strong></h1>
+                    <input type="hidden" th:value="${total}" id="hdTotal" />
                   </div>
                 </div>
               </div> 
@@ -101,7 +102,7 @@
 		          <span aria-hidden="true">&times;</span>
 		        </button>
 		      </div>
-		      <form id="apartado" th:action="@{/apartados/terminar}" method="post">
+		      <form id="apartado" th:action="@{/apartados/terminar}" method="post" onsubmit="return validaImporte()">
 			      <div class="modal-body div-interno-modal">
 			        <div class="form-group">
 			          <label for="recipient-name" class="col-form-label">Nombre del cliente:</label>
@@ -122,13 +123,46 @@
 			      </div>
 			      <div class="modal-footer">
 			        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-			        <button type="submit" class="btn btn-primary">Generar Apartado</button>
+			        <button type="submit" class="btn btn-primary">Generar Apartado</button>			        
 			      </div>
 			  </form>
 		    </div>
 		  </div>
 	  </div>
-	  <!-- /Modal -->
+	  <!-- Modal -->
+		<div class="modal fade" id="mensajeAlerta" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+		  <div class="modal-dialog modal-dialog-centered modal-lg">
+		    <div class="modal-content">
+		      <div class="modal-header div-encabezado-alert" >
+		        <h4 class="modal-title" id="staticBackdropLabel"></h4>
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          <span aria-hidden="true">&times;</span>
+		        </button>
+		      </div>
+		      <div class="modal-body div-interno-alert">
+		        <h5 class="mensaje"></h5>
+		        <div class="modal-footer">
+			        <button type="button" class="btn btn-primary" data-dismiss="modal">Aceptar</button>
+			    </div>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+    	<!-- Modal -->
+		<div class="modal fade" id="mensajeEspera" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+		  <div class="modal-dialog modal-dialog-centered">
+		    <div class="modal-content">
+		      <div class="modal-body  div-interno-alert">
+		      	<h5 class="mensaje">Cargando...</h5>
+		        <div class="d-flex justify-content-center">
+				  <div class="spinner-border" role="status">
+				    <span class="sr-only">Loading...</span>
+				  </div>
+				</div>
+		      </div>
+		    </div>
+		  </div>
+		</div>
     </main>
 
 
@@ -174,8 +208,26 @@
     		return (key >= 48 && key <= 57) || key == 46;
     	}
     	
-    	$("#fechaApartado").datepicker({dateFormat: 'dd-mm-yy'});
+    	function validaImporte(){
+    		var abonoInicial = parseFloat($("#abono").val());
+    		var total = parseFloat($("#hdTotal").val());
+    		
+    		if(abonoInicial > total){
+    			var modal = $("#mensajeAlerta");
+    			modal.find('.modal-title').text('ERROR');
+    			modal.find('.mensaje').text('EL ABONO INICIAL ES MAYOR AL IMPORTE TOTAL DEL APARTADO');
+    			modal.modal('show');
+    			return false;
+    		}
+    		
+    		$("#mensajeEspera").modal('show');
+    		return true;
+    	}
     	
+    	$("#fechaApartado").datepicker({dateFormat: 'dd-mm-yy'});
+    	$('.auto_remove_space').on('keyup',function(e) {
+   		  $( this ).val($( this ).val().replace(/\s/g, ''));
+   		});
     </script>
   </body>
 </html>

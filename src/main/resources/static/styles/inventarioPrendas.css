@@ -8,6 +8,9 @@
 	border-radius: 15px;
 	padding-bottom: 20px;
 }
+.div-encabezado-alert{
+	background: #1b205c;
+}
 .div-interno{
 /* 	background: #FAD5FF; */
 	background: #FAD5FF;
@@ -17,7 +20,16 @@
 /* 	background: #FAD5FF; */
 	background: #FAD5FF;
 }
+.div-interno-alert{
+	background: #c0c0c0;
+}
 h4 {
+  font-family: 'Indie Flower', cursive;
+  color: white;
+  text-shadow: 1px 1px 2px black, 0 0 25px blue, 0 0 5px darkblue;
+  font-size: 2em;
+}
+h4.alert {
   font-family: 'Indie Flower', cursive;
   color: white;
   text-shadow: 1px 1px 2px black, 0 0 25px blue, 0 0 5px darkblue;

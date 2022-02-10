@@ -36,3 +36,7 @@ function soloNumeros(e) {
 	//console.log(key);
 	return (key >= 48 && key <= 57) || key == 46;
 }
+
+$('.auto_remove_space').on('keyup',function(e) {
+  $( this ).val($( this ).val().replace(/\s/g, ''));
+});

@@ -87,9 +87,9 @@ public class CambiosController {
 		prendaQueDevuelve.setPrecio(prendaQueCambia.getPrecioVenta());
 		
 		prendaQueDevuelve.setPrenda(prendaQueCambia);
-		Venta actualizaFecha = prendaQueDevuelve.getVenta();
+		/*Venta actualizaFecha = prendaQueDevuelve.getVenta();
 		actualizaFecha.setFecha(new Date());
-		ventaService.guardar(actualizaFecha);
+		ventaService.guardar(actualizaFecha);*/
 		
 		prendaVendidaService.guardar(prendaQueDevuelve);
 		

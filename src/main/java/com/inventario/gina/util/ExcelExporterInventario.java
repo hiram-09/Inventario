@@ -20,13 +20,18 @@ import com.inventario.gina.model.Prenda;
 public class ExcelExporterInventario {
 	 private XSSFWorkbook workbook;
 	    private XSSFSheet sheet;
-	    private Page<Prenda> prendas;
+	    private Page<Prenda> prendasPage;
+	    private List<Prenda> prendas;
 	     
-	    public ExcelExporterInventario(Page<Prenda> prendas) {
+	    public ExcelExporterInventario(Page<Prenda> prendasPage) {
+	        this.prendasPage = prendasPage;
+	        workbook = new XSSFWorkbook();
+	    }
+	    
+	    public ExcelExporterInventario(List<Prenda> prendas) {
 	        this.prendas = prendas;
 	        workbook = new XSSFWorkbook();
 	    }
-	 
 	 
 	    private void writeHeaderLine() {
 	        sheet = workbook.createSheet("Prenda");
@@ -42,11 +47,12 @@ public class ExcelExporterInventario {
 	        createCell(row, 0, "INVENTARIO", style);      
 	        createCell(row, 1, "MARCA", style);       
 	        createCell(row, 2, "TALLA", style);      
-	        createCell(row, 3, "MODELO", style);    
-	        createCell(row, 4, "CATEGORIA", style);
-	        createCell(row, 5, "PRECIO DE COMPRA", style);
-	        createCell(row, 6, "PRECIO DE VENTA", style);
-	        createCell(row, 7, "CARACTERISTICAS", style); 
+	        createCell(row, 3, "MODELO", style);  
+	        createCell(row, 4, "ESTATUS", style);  
+	        createCell(row, 5, "CATEGORIA", style);
+	        createCell(row, 6, "PRECIO DE COMPRA", style);
+	        createCell(row, 7, "PRECIO DE VENTA", style);
+	        createCell(row, 8, "CARACTERISTICAS", style); 
 	    }
 	     
 	    private void createCell(Row row, int columnCount, Object value, CellStyle style) {
@@ -74,6 +80,30 @@ public class ExcelExporterInventario {
 	        font.setFontHeight(14);
 	        style.setFont(font);
 	                 
+	        for (Prenda p : prendasPage) {
+	            Row row = sheet.createRow(rowCount++);
+	            int columnCount = 0;
+	             
+	            createCell(row, columnCount++, p.getCodigo(), style);
+	            createCell(row, columnCount++, p.getMarca(), style);
+	            createCell(row, columnCount++, p.getTalla(), style);
+	            createCell(row, columnCount++, p.getModelo(), style);
+	            createCell(row, columnCount++, p.getEstatus(), style);
+	            createCell(row, columnCount++, p.getCategoria().getNombre(), style);
+	            createCell(row, columnCount++, p.getPrecioCompra(), style);
+	            createCell(row, columnCount++, p.getPrecioVenta(), style);
+	            createCell(row, columnCount++, p.getCaracteristicas(), style); 
+	        }
+	    }
+	    
+	    private void writeDataLinesAll() {
+	        int rowCount = 1;
+	 
+	        CellStyle style = workbook.createCellStyle();
+	        XSSFFont font = workbook.createFont();
+	        font.setFontHeight(14);
+	        style.setFont(font);
+	                 
 	        for (Prenda p : prendas) {
 	            Row row = sheet.createRow(rowCount++);
 	            int columnCount = 0;
@@ -82,16 +112,27 @@ public class ExcelExporterInventario {
 	            createCell(row, columnCount++, p.getMarca(), style);
 	            createCell(row, columnCount++, p.getTalla(), style);
 	            createCell(row, columnCount++, p.getModelo(), style);
+	            createCell(row, columnCount++, p.getEstatus(), style);
 	            createCell(row, columnCount++, p.getCategoria().getNombre(), style);
 	            createCell(row, columnCount++, p.getPrecioCompra(), style);
 	            createCell(row, columnCount++, p.getPrecioVenta(), style);
 	            createCell(row, columnCount++, p.getCaracteristicas(), style); 
 	        }
 	    }
-	     
 	    public void export(HttpServletResponse response) throws IOException {
 	        writeHeaderLine();
 	        writeDataLines();
+	         
+	        ServletOutputStream outputStream = response.getOutputStream();
+	        workbook.write(outputStream);
+	        workbook.close();
+	         
+	        outputStream.close();
+	         
+	    }
+	    public void exportAll(HttpServletResponse response) throws IOException {
+	        writeHeaderLine();
+	        writeDataLinesAll();
 	         
 	        ServletOutputStream outputStream = response.getOutputStream();
 	        workbook.write(outputStream);

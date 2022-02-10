@@ -96,7 +96,7 @@
                   <td th:text="${#dates.format(prendaVendida.venta.fecha, 'dd-MM-yyyy')}"></td>
                   <td>
                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalCambioFecha" th:data-id="${prendaVendida.id}">Modificar Fecha</button>
-                    
+                    <a class="btn btn-danger" th:href="@{/ventas/cancelar/{id} (id = ${prendaVendida.id})}">Cancelar</a>
                   </td>
                 </tr>
               </tbody>
@@ -111,6 +111,7 @@
                   <th scope="col">Nombre del Cliente</th>
                   <th scope="col">Fecha de Abono</th>
                   <th scope="col">Importe</th>
+                  <th scope="col">Detalle</th>
                 </tr>
               </thead>
               <tbody>
@@ -119,6 +120,9 @@
                   <td th:text="${apartadoAbono.nombreCliente}"></td>
                   <td th:text="${#dates.format(apartadoAbono.fechaAbono, 'dd-MM-yyyy')}"></td>			                  
                   <td th:text="${apartadoAbono.importe}"></td>
+                  <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalDetalle" 
+                  			  th:data-id="${apartadoAbono.idApartado}"
+                  			  th:data-nombre="${apartadoAbono.nombreCliente}" >Detalle</button></td>
                 </tr>           
               </tbody>
             </table> 
@@ -127,28 +131,93 @@
 	  <!-- Modal -->
 	  <div class="modal fade" id="modalCambioFecha" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 		  <div class="modal-dialog">
-		    <div class="modal-content">
-		      <div class="modal-header">
-		        <h5 class="modal-title" id="exampleModalLabel">Modificar fecha de venta</h5>
+		    <div class="modal-content   div-encabezado">
+		      <div class="modal-header  div-encabezado">
+		        <h4 class="modal-title" id="exampleModalLabel">Modificar fecha de venta</h4>
 		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
 		          <span aria-hidden="true">&times;</span>
 		        </button>
 		      </div>
 		      <form th:action="@{/ventas/actualiza_fecha}" method="post">
-			      <div class="modal-body">
+			      <div class="modal-body  div-interno-modal">
 			          <input type="hidden" id="idPrendaVendida" name="idPrendaVendida" class="codigo" />
 			          <input type="hidden" id="hdDesde" class="desde" name="desde"/>
 			          <input type="hidden" id="hdHasta" class="hasta" name="hasta"/>
 			          <div class="form-group">
 			            <label for="recipient-name" class="col-form-label">Fecha:</label>
 			            <input type="text" autocomplete="off" class="form-control" id="fVenta" name="fVenta" placeholder="Fecha de venta" required="required">
-			          </div>		        
+			          </div>
+			          <div class="modal-footer">
+				        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+				        <button type="submit" class="btn btn-primary">Modificar</button>
+				      </div>		        
 			      </div>
-			      <div class="modal-footer">
-			        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-			        <button type="submit" class="btn btn-primary">Modificar</button>
-			      </div>
+			      
 		      </form>
+		    </div>
+		  </div>
+		</div>
+	  <!-- /Modal -->
+	  <!-- Modal -->
+	  <div class="modal fade" id="modalDetalle" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+		    <div class="modal-content  div-encabezado">
+		      <div class="modal-header">
+		        <h4 class="modal-title div-encabezado" id="exampleModalLabel"></h4>
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          <span aria-hidden="true">&times;</span>
+		        </button>
+		      </div>
+		      <div class="modal-body div-interno-modal">
+		          <div class="form-group">
+		          
+			          <div th:fragment="resultsList" th:unless="${#lists.isEmpty(prendasApartadas)}">
+			          	<label th:if="${apartado.estatus == 'Apartada'}" >IMPORTE TOTAL:<span th:text="'$' + ${#numbers.formatDecimal(importeTotal, 0, 'COMMA', 2, 'POINT')}"></span></label><br>
+			          	<label th:if="${apartado.estatus == 'Apartada'}">RESTA:<span th:text="'$' + ${#numbers.formatDecimal(restante, 0, 'COMMA', 2, 'POINT')}"></span></label>
+			          	<label th:if="${apartado.estatus == 'Cancelada'}" >EL APARTADO SE CANCELÓ EL DÍA: <span th:text="${#dates.format(apartado.fechaCancelado, 'dd/MM/yyyy')}"></span></label>
+			          	<label th:if="${apartado.estatus == 'Liquidada'}" >EL APARTADO SE LIQUIDÓ EL DÍA: <span th:text="${#dates.format(apartado.fechaLiquidado, 'dd/MM/yyyy')}"></span></label>
+			          	<hr>
+			            <table class="table table-hover table-striped mb-0">
+			            	<thead class="table-head">
+				            	<tr>
+				            		<th>Inventario</th>
+				            		<th>Categoría</th>
+				            		<th>Precio</th>
+				            	</tr>
+				            </thead>
+				            <tbody>
+				            	<tr th:each="prenda : ${prendasApartadas}">
+				            		<td th:text="${prenda.prenda.codigo}"></td>
+				            		<td th:text="${prenda.prenda.categoria.nombre}"></td>
+				            		<td th:text="'$' + ${#numbers.formatDecimal(prenda.prenda.precioVenta, 0, 'COMMA', 2, 'POINT')}"></td>
+				            	</tr>
+				            </tbody>
+			            </table>
+			            <hr>
+		           		<div class="form-group">
+				          <table class="table table-hover table-striped mb-0">
+				            	<thead class="table-head">
+					            	<tr>
+					            		<th>Fecha</th>
+					            		<th>Importe</th>
+					            	</tr>
+					            </thead>
+					            <tbody>
+					            	<tr th:each="abono : ${abonos}">
+					            		<td th:text="${#dates.format(abono.fecha, 'dd-MM-yyyy')}"></td>
+					            		<td th:text="'$' + ${#numbers.formatDecimal(abono.importe, 0, 'COMMA', 2, 'POINT')}"></td>
+					            	</tr>
+					            </tbody>
+				            </table>
+		         	 	</div>
+		          		<div id="resultAbonos"></div>
+		          		  <div class="modal-footer">
+					        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+					      </div>
+			          </div>
+		          	<div id="resultPrendas"></div>
+		          </div>		          
+		      </div>		      
 		    </div>
 		  </div>
 		</div>
@@ -162,7 +231,20 @@
 	<script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>    
     <script th:src="@{/tinymce/tinymce.min.js}"></script>
     <script>   
-    
+	    $('#modalDetalle').on('show.bs.modal', function (event) {
+	  	  var button = $(event.relatedTarget);
+	  	  var idApartado = button.data('id');
+	  	  var nombre = button.data('nombre');
+	  	  var modal = $(this)
+	  	  modal.find('.modal-title').text('Apartado de: ' + nombre);
+		  consultaPrendas(idApartado);
+	  	  //consultaAbonos(idApartado);
+	  	})
+	  	
+	  	function consultaPrendas(idApartado){
+	  		var url = "/ventas/consultaPrendas/"+idApartado;
+	  		$("#resultPrendas").load(url);
+	  	}
     	$('#modalCambioFecha').on('show.bs.modal', function (event) {
     	  var button = $(event.relatedTarget) 
     	  var id = button.data('id') 

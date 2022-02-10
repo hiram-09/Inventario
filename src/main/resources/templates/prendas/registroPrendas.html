@@ -43,7 +43,7 @@
                 <div class="col-md-3"> 
                   <div class="form-group">
                     <label for="codigo">Inventario</label>
-                    <input type="text" autocomplete="off" maxlength="45" class="form-control input-in" th:field="*{codigo}" id="codigo" name="codigo" placeholder="Escriba el inventario" required="required">
+                    <input type="text" autocomplete="off" maxlength="45" class="form-control input-in auto_remove_space numLetras" th:field="*{codigo}" id="codigo" name="codigo" placeholder="Escriba el inventario" required="required">
                   </div>
                 </div>
                 <div class="col-md-3"> 
@@ -61,7 +61,7 @@
                 <div class="col-md-3"> 
                   <div class="form-group">
                     <label for="talla">Talla</label>
-                    <input type="text" class="form-control input-in" th:field="*{talla}" name="talla" id="talla" maxlength="3">                      
+                    <input type="text" class="form-control input-in auto_remove_space numLetras" th:field="*{talla}" name="talla" id="talla" maxlength="4">                      
                   </div>
                 </div>
                 <div class="col-md-3"> 
@@ -117,6 +117,19 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script> 
     <script th:src="@{/bootstrap/js/bootstrap.min.js}"></script> 
-    <script th:src="@{/js/util.js}"></script>      
+    <script th:src="@{/js/util.js}"></script>     
+    <script>
+		$('.auto_remove_space').on('keyup',function(e) {
+ 		  $( this ).val($( this ).val().replace(/\s/g, ''));
+ 		});
+		$(".numLetras").bind('keypress', function(event) {
+		  var regex = new RegExp("^[a-zA-Z0-9\- ]+$");
+		  var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+		  if (!regex.test(key)) {
+		    event.preventDefault();
+		    return false;
+		  }
+		});
+    </script> 
   </body>
 </html>

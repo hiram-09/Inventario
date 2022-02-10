@@ -44,7 +44,7 @@ public class ApartadosServiceImpl implements IApartadosService {
 
 	@Override
 	public List<Apartados> buscarPorNombre(String nombre) {
-		return null;//apartadosRepo.findByNombreContainsOrderByIdDesc(nombre);
+		return apartadosRepo.findByNombreClienteContainsOrderByIdDesc(nombre);
 	}
 
 	@Override

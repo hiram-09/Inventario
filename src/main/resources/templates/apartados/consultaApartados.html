@@ -36,9 +36,6 @@
             <form th:action="@{/apartados/buscar}" th:method="get">    
 	            <div class="row">
 	                <div class="col-md-3"> 
-	                    <input type="text" class="form-control input-in" id="codigo" name="codigo" placeholder="Búsqueda por inventario" >
-	                </div>
-	                <div class="col-md-3"> 
 	                    <input type="text" class="form-control input-in" id="nombre" name="nombre" placeholder="Búsqueda por cliente" >
 	                </div>
 	                <div class="col-md-3"> 
@@ -161,7 +158,7 @@
 		         	 	</div>
 		          		<div id="resultAbonos"></div>
 		          		  <div class="modal-footer">
-					        <a th:if="${apartado.estatus == 'Apartada'}" th:href="@{/apartados/eliminar/{id} (id=${idApartado})}" onclick="return confirm('¿Estas seguro?')" class="btn btn-danger" role="button" title="Cancelar Apartado">Cancelar Apartado</a>
+					        <a th:if="${apartado.estatus == 'Apartada'}" th:href="@{/apartados/eliminar/{id} (id=${idApartado})}" onclick="return confirm('¿ESTA SEGURO QUE DESEA CANCELAR EL APARTADO?')" class="btn btn-danger" role="button" title="Cancelar Apartado">Cancelar Apartado</a>
 					        <form th:action="@{/apartados/liquidar}" method="post" onsubmit="return liquidar()">
 					        	<input type="hidden" name="idApartadoL" id="idApartadoL">
 					        	<input type="hidden" name="restanteL" id="restanteL">
@@ -178,7 +175,25 @@
 		  </div>
 		</div>
 	  <!-- /Modal -->
-	  
+	  <!-- Modal -->
+		<div class="modal fade" id="mensajeAlerta" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+		  <div class="modal-dialog modal-dialog-centered">
+		    <div class="modal-content">
+		      <div class="modal-header div-encabezado-alert" >
+		        <h4 class="modal-title alert" id="staticBackdropLabel"></h4>
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          <span aria-hidden="true">&times;</span>
+		        </button>
+		      </div>
+		      <div class="modal-body div-interno-alert">
+		        <h5 class="mensaje"></h5>
+		        <div align="right">
+			        <button type="button" class="btn btn-primary" data-dismiss="modal">Aceptar</button>
+			    </div>
+		      </div>
+		    </div>
+		  </div>
+		</div>
 	  
     </main>
     <!-- Bootstrap core JavaScript
@@ -209,13 +224,15 @@
     		
   			var importe = parseFloat($("#txtAbono").val());
       		var restante = parseFloat($("#hdRestante").val());
+      		var modal = $("#mensajeAlerta");
+			modal.find('.modal-title').text('ERROR');
       		if(importe > restante){
-      			alert("El importe excede a lo que resta");
+      			modal.find('.mensaje').text('EL IMPORTE EXCEDE EL TOTAL A LIQUIDAR');
+    			modal.modal('show');
       			return false;
       		}else if(importe == restante){
-      			alert("El importe ingresado es igual al restante del apartado.\nFavor de presionar el botón liquidar.");
-      			
-      			liquidar();
+      			modal.find('.mensaje').text('EL IMPORTE INGRESADO ES IGUAL AL RESTANTE DEL APARTADO. \nFAVOR DE PRESIONAR EL BOTÓN LIQUIDAR.');
+    			modal.modal('show');
       			return false;
       		}else{
       			return true;
@@ -224,15 +241,19 @@
     		
     	}
     	function liquidar(){
-    		$("#restanteL").val(parseFloat($("#hdRestante").val()));
-    		$("#idApartadoL").val($("#idApartado").val());
-    		var fecha = $("#fecha").val();
-    		if(fecha == "" ){
-    			fecha = new Date();
-    			fecha = fecha.getDate()+"-"+(fecha.getMonth()+1)+"-"+fecha.getFullYear();
+    		if(confirm("¿ESTA SEGURO QUE DESEA LIQUIDAR EL APARTADO?")){
+	    		$("#restanteL").val(parseFloat($("#hdRestante").val()));
+	    		$("#idApartadoL").val($("#idApartado").val());
+	    		var fecha = $("#fecha").val();
+	    		if(fecha == "" ){
+	    			fecha = new Date();
+	    			fecha = fecha.getDate()+"-"+(fecha.getMonth()+1)+"-"+fecha.getFullYear();
+	    		}
+	    		$("#fechaL").val(fecha);
+	    		return true;
+    		}else{
+    			return false;
     		}
-    		$("#fechaL").val(fecha);
-    		return true;
     	}
     </script>     
   </body>

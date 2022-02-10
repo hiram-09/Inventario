@@ -253,19 +253,13 @@ public class ApartadosController {
 	
 	
 	@GetMapping("/buscar")
-	public String buscar(@RequestParam String nombre, @RequestParam String codigo, RedirectAttributes att, Model model) {
+	public String buscar(@RequestParam String nombre, RedirectAttributes att, Model model) {
 		List<Apartados> apartados = null;
 		if(!nombre.equals("")) {
 			apartados = apartadoService.buscarPorNombre(nombre);
 		}else {
-			Prenda prenda = prendaService.buscarPorCodigo(codigo);
-			System.out.println(prenda);
-			if(prenda != null)
-				apartados = apartadoService.buscarPorPrenda(prenda);
-			else {
-				att.addFlashAttribute("mensaje", "El código " + codigo + " no existe").addFlashAttribute("clase", "warning");
-				return "apartados/consultaApartados";
-			}
+			att.addFlashAttribute("mensaje", "No existen coincidencias con el nombre ingresado").addFlashAttribute("clase", "warning");
+			return "apartados/consultaApartados";
 		}
 		model.addAttribute("apartados", apartados);
 		model.addAttribute("totalPrendas", apartados.size());

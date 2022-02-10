@@ -31,8 +31,8 @@
           	<form th:action="@{/cambios/buscar/devuelta}" method="get">
           	 <div class="row">
                 <div class="col-md-3"> 
-                	<label for="desde">Prenda devuelta</label>
-                    <input type="text" autocomplete="off" class="form-control" id="codigo" name="codigoDevuelto" placeholder="Inventario prenda devuelta" required="required">
+                	<label for="codigoDevuelto">Prenda devuelta</label>
+                    <input type="text" autocomplete="off" class="form-control auto_remove_space" id="codigo" name="codigoDevuelto" placeholder="Inventario prenda devuelta" required="required">
                 </div>
               </div>
             </form>            
@@ -67,8 +67,10 @@
           	<form th:action="@{/cambios/buscar/cambio}" method="get">
           	 <div class="row">
                 <div class="col-md-3"> 
-                	<label for="desde">Prenda a cambio</label>
-                    <input type="text" autocomplete="off" class="form-control" id="codigo" name="codigoCambio" placeholder="Inventario prenda a cambio" required="required">
+                	<label for="codigoCambio">Prenda a cambio</label>
+                	<div th:if="${prendaDevuelta} != null">
+                    	<input type="text" autocomplete="off" class="form-control auto_remove_space" id="codigo" name="codigoCambio" placeholder="Inventario prenda a cambio" required="required">
+                    </div>
                 </div>
               </div>
             </form>            
@@ -119,5 +121,10 @@
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	<script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>    
     <script th:src="@{/js/util.js}"></script>
+    <script>
+		$('.auto_remove_space').on('keyup',function(e) {
+ 		  $( this ).val($( this ).val().replace(/\s/g, ''));
+ 		});
+    </script>
   </body>
 </html>
