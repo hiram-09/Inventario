@@ -27,17 +27,17 @@ h4 {
   font-family: 'Indie Flower', cursive;
   color: white;
   text-shadow: 1px 1px 2px black, 0 0 25px blue, 0 0 5px darkblue;
-  font-size: 2em;
+  font-size: 2.5em;
 }
 h4.alert {
   font-family: 'Indie Flower', cursive;
   color: white;
   text-shadow: 1px 1px 2px black, 0 0 25px blue, 0 0 5px darkblue;
-  font-size: 2em;
+  font-size: 2.5em;
 }
 .table-head{
 	background-color: #61A9FF;
-	font-size: 1.1em;
+	font-size: 1.3em;
 	color:#212529;
 	text-shadow: 0 0 1px #FF0000;
 }
@@ -54,15 +54,19 @@ h4.alert {
     text-align: center;
 }
 label{
-	font-size: 1.2em;
+	font-size: 1.7em;
 	font-weight: bold;
 }
 .input-in, .detalle-input, .detalle{
 	font-size: 1.2em;
 	font-weight: bold;
 }
-th, td{
-	font-size: 1em;
+th{
+	font-size: 1.1em;
+	font-weight: bold;
+}
+td{
+	font-size: 1.4em;
 	font-weight: bold;
 }
 .container{
@@ -70,4 +74,8 @@ th, td{
 }
 .login{
 	max-width: 600px; 
+}
+.alert{
+	font-size: 20px;
+	font-weight: bold;
 }

@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
+    <meta name="_csrf" content="${_csrf.token}"/>
+	<meta name="_csrf_header" content="${_csrf.headerName}"/>
     <link rel="icon" href="favicon.ico">
 
     <title>Tienda | Consulta Apartados</title>
@@ -16,6 +18,19 @@
     <link th:href="@{/styles/inventarioPrendas.css}" rel="stylesheet">
     <link href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" rel="stylesheet">
     <link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet" >
+    <style>
+		/*Tabla con los días del mes*/
+		.ui-datepicker table
+		{
+		font-size: 7px;
+		}
+		
+		/*La cabecera*/
+		.ui-datepicker .ui-datepicker-header
+		{
+		font-size: 8px;
+		}
+	  </style>
   </head>
 
   <body  class="principal">
@@ -62,7 +77,7 @@
               </thead>
               <tbody>
                 <tr th:each="apartado: ${apartados}" >
-                  <th th:text="${#dates.format(apartado.fechaApartado, 'dd-MM-yyyy')}"></th>
+                  <td th:text="${#dates.format(apartado.fechaApartado, 'dd-MM-yyyy')}"></td>
                   <td th:text="${apartado.nombreCliente}"></td>
                   <td th:text="${apartado.telefonoCliente}"></td>
                   <td>
@@ -113,6 +128,7 @@
 				            		<th>Inventario</th>
 				            		<th>Categoría</th>
 				            		<th>Precio</th>
+				            		<th></th>
 				            	</tr>
 				            </thead>
 				            <tbody>
@@ -120,6 +136,7 @@
 				            		<td th:text="${prenda.prenda.codigo}"></td>
 				            		<td th:text="${prenda.prenda.categoria.nombre}"></td>
 				            		<td th:text="'$' + ${#numbers.formatDecimal(prenda.prenda.precioVenta, 0, 'COMMA', 2, 'POINT')}"></td>
+				            		<td><button th:if="${apartado.estatus != 'Cancelada'}" class="btn btn-success btn-sm" role="button" name="cambiar" id="cambiar" th:onClick="'cambiar('+${prenda.prenda.id}+', '+${idApartado}+')'">Cambiar</button></td>
 				            	</tr>
 				            </tbody>
 			            </table>
@@ -129,12 +146,13 @@
 			            		<input type="hidden" name="idApartado" id="idApartado" th:value="${idApartado}" />
 			            		<input type="hidden" name="hdRestante" id="hdRestante" th:value="${restante}" />
 			            		<div class="col-md-4"><input placeholder="Importe" type="text" id="txtAbono" name="txtAbono" class="form-control" required="required"></div>
-			            		<div class="col-md-4"><input type="text" autocomplete="off" class="form-control" id="fecha" name="fecha" placeholder="Fecha" required="required"></div>
+			            		<div class="col-md-4"><input type="text" autocomplete="off" class="form-control" id="fecha" name="fecha" placeholder="Fecha" required="required">
 			            		<script>
 			            		$(function () {
-			                 		 $("#fecha").datepicker({dateFormat: 'dd-mm-yy'});
+			            			 $("#fecha").datepicker({dateFormat: 'dd-mm-yy'});
 			                 	 });
 			            		</script>
+			            		</div>
 			            		<div class="col-md-2"><input type="submit" class="btn btn-primary" id="btnAbonar" value="Abonar"></div>		            															               
 		            		</div>
 			            </form>
@@ -214,7 +232,28 @@
     	  modal.find('.modal-title').text('Apartado de: ' + nombreCliente);
     	  consultaPrendas(idApartado);
     	  //consultaAbonos(idApartado);
-    	})
+    	});
+    	
+    	function cambiar(idPrenda, idApartado){
+    		const formCambio = document.createElement('form');
+    		formCambio.action = '/cambios/buscar/apartada/devuelta';
+    		formCambio.method = 'post';
+    		document.body.appendChild(formCambio);
+    		
+    		const formField1 = document.createElement('input');
+    	    formField1.type = 'hidden';
+    	    formField1.name = 'idApartado';
+    	    formField1.value = idApartado;
+ 			formCambio.appendChild(formField1);
+ 			
+ 			const formField = document.createElement('input');
+    	    formField.type = 'hidden';
+    	    formField.name = 'idPrenda';
+    	    formField.value = idPrenda;
+ 			formCambio.appendChild(formField);
+    		
+ 			formCambio.submit();
+    	}
     	
     	function consultaPrendas(idApartado){
     		var url = "/apartados/consultaPrendas/"+idApartado;
@@ -236,9 +275,7 @@
       			return false;
       		}else{
       			return true;
-      		}
-    		
-    		
+      		}    		
     	}
     	function liquidar(){
     		if(confirm("¿ESTA SEGURO QUE DESEA LIQUIDAR EL APARTADO?")){

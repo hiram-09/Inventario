@@ -83,6 +83,7 @@
                   <th scope="col">Vendedor</th>
                   <th scope="col">Precio</th>
                   <th scope="col">Fecha de Venta</th>
+                  <th scope="col">Acciones</th>
                 </tr>
               </thead>
               <tbody>
@@ -96,7 +97,7 @@
                   <td th:text="${#dates.format(prendaVendida.venta.fecha, 'dd-MM-yyyy')}"></td>
                   <td>
                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalCambioFecha" th:data-id="${prendaVendida.id}">Modificar Fecha</button>
-                    <a class="btn btn-danger" th:href="@{/ventas/cancelar/{id} (id = ${prendaVendida.id})}">Cancelar</a>
+                    <a class="btn btn-danger" onClick="return(confirm('¿Estás seguro de cancelar la venta?'))" th:href="@{/ventas/cancelar/{id} (id = ${prendaVendida.id})}">Cancelar</a>
                   </td>
                 </tr>
               </tbody>

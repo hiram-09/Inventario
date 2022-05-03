@@ -161,7 +161,7 @@ public class VentasController {
 	}
 	
 	@GetMapping("/consultaPrendas/{id}")
-	public String consultaPrendas(Model model, @PathVariable("id") Integer idApartado, @RequestParam("fVenta") Date fecha, @RequestParam("desde") Date desde) {
+	public String consultaPrendas(Model model, @PathVariable("id") Integer idApartado) {
 		Double importeTotal = 0.0;
 		Double totalAbonos = 0.0;
 		Apartados apartado = apartadoService.buscarPorId(idApartado);

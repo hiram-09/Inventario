@@ -31,4 +31,9 @@ public class PrendaApartadaServiceImpl implements IPrendaApartadaService {
 		return prendaApartadaRepo.findByApartado(apartado);
 	}
 
+	@Override
+	public PrendaApartada buscarPorIdApartadoAndIdPrenda(Integer idApartado, Integer idPrenda) {
+		return prendaApartadaRepo.buscarIdApartadoAndIdPrenda(idApartado, idPrenda);
+	}
+
 }

@@ -67,11 +67,14 @@ public class PrendaApartada {
 	public void setApartado(Apartados apartado) {
 		this.apartado = apartado;
 	}
-
+	
+	public Double getTotalAbonos() {
+		return this.apartado.getAbonos().stream().mapToDouble(abono -> abono.getImporte()).sum();
+	}
+	
 	@Override
 	public String toString() {
-		return "PrendaApartada [id=" + id + ", precio=" + precio + ", prenda=" + prenda + ", apartado=" + apartado
-				+ "]";
+		return "PrendaApartada [id=" + id + ", precio=" + precio + ", prenda=" + prenda + ", apartado=" + apartado + ", Total Importe=" + getTotalAbonos() +"]";
 	}
 	
 }

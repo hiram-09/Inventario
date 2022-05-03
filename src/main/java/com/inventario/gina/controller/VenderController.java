@@ -80,7 +80,7 @@ public class VenderController {
 			}
 		}
 		carrito.add(new PrendaParaVender(prendaBuscadaPorCodigo.getId(), prendaBuscadaPorCodigo.getCodigo(), prendaBuscadaPorCodigo.getMarca(), prendaBuscadaPorCodigo.getTalla(), 
-				prendaBuscadaPorCodigo.getModelo(), prendaBuscadaPorCodigo.getPrecioVenta(), prendaBuscadaPorCodigo.getCategoria(), prendaBuscadaPorCodigo.getEstatus()));
+				prendaBuscadaPorCodigo.getModelo(), prendaBuscadaPorCodigo.getPrecioVenta(), prendaBuscadaPorCodigo.getCategoria(), prendaBuscadaPorCodigo.getEstatus(), prendaBuscadaPorCodigo.getCaracteristicas()));
 
 		this.addCarrito(carrito, request);
 		return "redirect:/vender/";

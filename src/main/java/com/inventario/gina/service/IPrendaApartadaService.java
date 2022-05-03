@@ -11,4 +11,6 @@ public interface IPrendaApartadaService {
 	List<PrendaApartada> buscarTodas();
 	
 	List<PrendaApartada> buscarPorApartado(Apartados apartado);
+	
+	PrendaApartada buscarPorIdApartadoAndIdPrenda(Integer idApartado, Integer idPrenda);
 }

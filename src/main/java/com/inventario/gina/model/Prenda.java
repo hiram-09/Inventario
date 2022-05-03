@@ -1,14 +1,11 @@
 package com.inventario.gina.model;
 
 import java.util.Date;
-import java.util.Set;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -37,7 +34,7 @@ public class Prenda {
 	public Prenda(){}
 
 	public Prenda(Integer id, String codigo, String marca, String talla, String modelo, Double precioVenta,
-			Categorias categoria, String estatus) {
+			Categorias categoria, String estatus, String caracteristicas) {
 		super();
 		this.id = id;
 		this.codigo = codigo;
@@ -47,6 +44,7 @@ public class Prenda {
 		this.precioVenta = precioVenta;
 		this.categoria = categoria;
 		this.estatus = estatus;
+		this.caracteristicas = caracteristicas;
 	}
 
 
